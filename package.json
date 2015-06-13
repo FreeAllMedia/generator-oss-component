@@ -1,0 +1,40 @@
+{
+  "name": "generator-oss-component",
+  "version": "0.0.0",
+  "description": "A Yeoman generator for open-source software components.",
+  "license": "MIT",
+  "main": "app/index.js",
+  "repository": "FreeAllMedia/generator-oss-component",
+  "author": "FreeAllMedia, LLC",
+  "contributors": [
+    {
+      "name": "nicosommi",
+      "email": "nicosommi@gmail.com"
+    },
+    {
+      "name": "dcrockwell",
+      "email": "dcautomates@gmail.com"
+    },
+    {
+      "name": "paulgoggin",
+      "email": "pgoggin@gmail.com"
+    }
+  ],
+  "scripts": {
+    "test": "mocha"
+  },
+  "files": [
+    "generators"
+  ],
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^0.19.0",
+    "chalk": "^1.0.0",
+    "yosay": "^1.0.2"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  }
+}
