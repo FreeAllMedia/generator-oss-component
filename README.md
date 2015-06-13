@@ -1,4 +1,4 @@
-# Open-Source Component Scaffolding Generator
+# generator-oss-component for Yeoman
 
 [![npm version](https://img.shields.io/npm/v/generator-oss-component.svg)](https://www.npmjs.com/package/generator-oss-component) [![npm downloads](https://img.shields.io/npm/dm/generator-oss-component.svg)](https://www.npmjs.com/package/generator-oss-component)
 
