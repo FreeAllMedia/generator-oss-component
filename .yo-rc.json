@@ -1,3 +1,5 @@
 {
-  "generator-generator": {}
+  "generator-oss-component": {
+    "name": "oss-component"
+  }
 }

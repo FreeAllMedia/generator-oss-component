@@ -11,7 +11,7 @@
 ## Install via `npm`
 
 ```
-npm install generator-oss-component
+npm install -g generator-oss-component
 ```
 
 ## Run Automated Tests
