@@ -177,7 +177,8 @@ var Component = (function (_yeoman$generators$Base) {
 				homepage: this.properties.homepage,
 				repositoryUrl: this.properties.repositoryUrl,
 				issueTrackerUrl: this.properties.issueTrackerUrl,
-				travisEnvironment: this.properties.travisEnvironment
+				sauceUserName: this.properties.sauceLabsUserName || "",
+				sauceLabsAccessToken: this.properties.sauceLabsAccessToken || ""
 			};
 
 			// copy files
