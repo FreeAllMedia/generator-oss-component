@@ -17,7 +17,8 @@ describe("oss-component generator", function () {
 
   before(function (done) {
     name = "testComponent";
-    _yeomanGenerator.test.run(_path2["default"].join(__dirname, "../..")).inDir(_path2["default"].join(_os2["default"].tmpdir(), "/temp-test")).withOptions({ "skip-install": true }).withPrompts({
+    //throw path.join(__dirname, "../../generators/app")
+    _yeomanGenerator.test.run(_path2["default"].join(__dirname, "../../generators/app")).inDir(_path2["default"].join(_os2["default"].tmpdir(), "/temp-test")).withOptions({ "skip-install": true }).withPrompts({
       name: name
     }).on("end", done);
   });

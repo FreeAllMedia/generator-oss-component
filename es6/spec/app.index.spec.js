@@ -7,7 +7,8 @@ describe("oss-component generator", () => {
 
   before(done => {
     name = "testComponent";
-    helpers.run(path.join(__dirname, "../.."))
+    //throw path.join(__dirname, "../../generators/app")
+    helpers.run(path.join(__dirname, "../../generators/app"))
 	    .inDir(path.join(os.tmpdir(), "/temp-test"))
       .withOptions({ "skip-install": true })
 	    .withPrompts({
@@ -57,7 +58,7 @@ describe("oss-component generator", () => {
         assert.file([`${name}/.floo`, `${name}/.flooignore`]);
       });
     });
-    
+
     describe("(source code management)", () => {
       it("should create utiliy git files", () => {
         assert.file([`${name}/.gitignore`]);
