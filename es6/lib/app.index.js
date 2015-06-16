@@ -1,6 +1,8 @@
 import yeoman from "yeoman-generator";
 import yosay from "yosay";
 import inflect from "jargon";
+import encrypt from "travis-encrypt";
+import {exec} from "child_process";
 
 const copyFiles = Symbol();
 
@@ -11,7 +13,6 @@ export default class Component extends yeoman.generators.Base {
 
 	prompting() {
 		let done = this.async();
-
 		// Have Yeoman greet the user.
 		this.log(yosay(
 			"Welcome to the stylish OSS component generator! our base path is " + this.destinationRoot()
@@ -52,55 +53,97 @@ export default class Component extends yeoman.generators.Base {
 		// https://github.com/FreeAllMedia/jargon
 		this.prompt(prompts, function (newProperties) {
 			this.properties = newProperties;
-			this.properties.organizationNameCamelCase = inflect(this.properties.organizationName).camel.toString();
+      this.properties.organizationNameCamelCase = inflect(this.properties.organizationName).camel.toString();
+      this.properties.organizationNamePascalCase = inflect(this.properties.organizationName).camel.pascal.toString();
+      this.properties.repoSuffix = `${this.properties.organizationNamePascalCase}/${this.properties.name}`;
 
 			prompts = [{
 					type: "input",
-					name: "floobitsWorkspace",
-					message: "What is the floobits workspace url?",
-					default: `https://floobits.com/${this.properties.organizationNameCamelCase}/${this.properties.name}`,
-					when:
-						() => {
-							return this.properties.floobits;
-						}
-				},{
-					type: "input",
 					name: "repositoryUrl",
 					message: "What is your repo url?",
-					default: `https://github.com/${this.properties.organizationNameCamelCase}/${this.properties.name}.git`
+					default: `https://github.com/${this.properties.repoSuffix}.git`
 				},{
 					type: "input",
 					name: "issueTrackerUrl",
 					message: "What is the issue tracker url for the component?",
-					default: `https://github.com/${this.properties.organizationNameCamelCase}/${this.properties.name}/issues`
+					default: `https://github.com/${this.properties.repoSuffix}/issues`
 				},{
-					type: "input",
-					name: "homepage",
-					message: "What is the component homepage?",
-					default: `https://github.com/${this.properties.organizationNameCamelCase}/${this.properties.name}`
-				}];
+          type: "input",
+          name: "homepage",
+          message: "What is the component homepage?",
+          default: `https://github.com/${this.properties.repoSuffix}`
+        },{
+          type: "input",
+          name: "floobitsWorkspace",
+          message: "What is the floobits workspace url?",
+          default: `https://floobits.com/${this.properties.repoSuffix}`,
+          when:
+            () => {
+              return this.properties.floobits;
+            }
+        },{
+          type: "input",
+          name: "sauceLabsUserName",
+          message: "Please provide the user name for Sauce Labs (we will encrypt it into the travis yaml for you)",
+          default: `${this.properties.organizationNameCamelCase}`,
+          when:
+            () => {
+              return this.properties.sauceLabs;
+            }
+        },{
+          type: "input",
+          name: "sauceLabsAccessToken",
+          message: "Paste here the access token for Sauce Labs (we will encrypt it for you, too)",
+          default: ``,
+          when:
+            () => {
+              return this.properties.sauceLabs;
+            }
+        }];
 
 			this.prompt(prompts, function (newProperties) {
+        // Object.assign(this.properties, newProperties);
 				this.properties.floobitsWorkspace = newProperties.floobitsWorkspace;
 				this.properties.repositoryUrl = newProperties.repositoryUrl;
 				this.properties.issueTrackerUrl = newProperties.issueTrackerUrl;
 				this.properties.homepage = newProperties.homepage;
-				done();
+        if(this.properties.sauceLabs) {
+          console.log("using travis repoSuffix ", this.properties.repoSuffix);
+          exec(`../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js -r ${this.properties.repoSuffix} SAUCE_USERNAME=${newProperties.sauceLabsUserName} SAUCE_ACCESS_TOKEN=${newProperties.sauceLabsAccessToken}`,
+            function execCallback(error, standardOutput, stderr) {
+              console.log("standardOutput is ", {stdout: standardOutput, error: error, stderr: stderr});
+              done();
+            }
+          );
+          // coomented because of the issue
+          // https://github.com/pwmckenna/node-travis-encrypt/issues/10
+          // encrypt(this.properties.repoSuffix,
+          //     `SAUCE_USERNAME=${newProperties.sauceLabsUserName} SAUCE_ACCESS_TOKEN=${newProperties.sauceLabsAccessToken}`,
+          //     function encryptCallback(error, data) {
+          //       console.log("encrypt sauce labs", {data: data});
+          //       this.properties.travisEnvironment = data;
+          //       done();
+          //     }.bind(this)
+          //   );
+        } else {
+          done();
+        }
 			}.bind(this));
 		}.bind(this));
 	}
 
 	writing() {
-		this.context = {
+    this.context = {
 			name: this.properties.name,
 			description: this.properties.description,
 			floobitsWorkspace: this.properties.floobitsWorkspace,
 			componentNamePascalCase: inflect(this.properties.name).pascal.toString(),
 			organizationName: this.properties.organizationName,
-			travisKey: null,
 			homepage: this.properties.homepage,
 			repositoryUrl: this.properties.repositoryUrl,
-			issueTrackerUrl: this.properties.issueTrackerUrl
+			issueTrackerUrl: this.properties.issueTrackerUrl,
+      sauceUserName: this.properties.sauceLabsUserName || "",
+      sauceLabsAccessToken: this.properties.sauceLabsAccessToken || ""
 		};
 
 		// copy files
@@ -147,7 +190,7 @@ export default class Component extends yeoman.generators.Base {
 			newName = newName.replace("##componentName##", this.context.name);
 			this.fs.copyTpl(
 				this.templatePath(templatePath),
-				this.destinationPath(`${this.context.name}/${newName}`),
+				this.destinationPath(`${newName}`),
 				this.context
 			);
 		}, this);
@@ -155,8 +198,11 @@ export default class Component extends yeoman.generators.Base {
 
 	install() {
 		this.installDependencies({
+      skipInstall: this.options['skip-install'],
 			callback: function callbackInstallDependencies() {
-				this.spawnCommand("gulp", ["build"]);
+        if(!this.skipInstall) {
+          this.spawnCommand("gulp", ["test"]);
+        }
 			}.bind(this)
 		});
 	}

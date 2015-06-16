@@ -24,6 +24,12 @@ var _jargon = require("jargon");
 
 var _jargon2 = _interopRequireDefault(_jargon);
 
+var _travisEncrypt = require("travis-encrypt");
+
+var _travisEncrypt2 = _interopRequireDefault(_travisEncrypt);
+
+var _child_process = require("child_process");
+
 var copyFiles = Symbol();
 
 var Component = (function (_yeoman$generators$Base) {
@@ -46,7 +52,6 @@ var Component = (function (_yeoman$generators$Base) {
 		key: "prompting",
 		value: function prompting() {
 			var done = this.async();
-
 			// Have Yeoman greet the user.
 			this.log((0, _yosay2["default"])("Welcome to the stylish OSS component generator! our base path is " + this.destinationRoot()));
 
@@ -88,38 +93,75 @@ var Component = (function (_yeoman$generators$Base) {
 
 				this.properties = newProperties;
 				this.properties.organizationNameCamelCase = (0, _jargon2["default"])(this.properties.organizationName).camel.toString();
+				this.properties.organizationNamePascalCase = (0, _jargon2["default"])(this.properties.organizationName).camel.pascal.toString();
+				this.properties.repoSuffix = "" + this.properties.organizationNamePascalCase + "/" + this.properties.name;
 
 				prompts = [{
 					type: "input",
+					name: "repositoryUrl",
+					message: "What is your repo url?",
+					"default": "https://github.com/" + this.properties.repoSuffix + ".git"
+				}, {
+					type: "input",
+					name: "issueTrackerUrl",
+					message: "What is the issue tracker url for the component?",
+					"default": "https://github.com/" + this.properties.repoSuffix + "/issues"
+				}, {
+					type: "input",
+					name: "homepage",
+					message: "What is the component homepage?",
+					"default": "https://github.com/" + this.properties.repoSuffix
+				}, {
+					type: "input",
 					name: "floobitsWorkspace",
 					message: "What is the floobits workspace url?",
-					"default": "https://floobits.com/" + this.properties.organizationNameCamelCase + "/" + this.properties.name,
+					"default": "https://floobits.com/" + this.properties.repoSuffix,
 					when: function when() {
 						return _this.properties.floobits;
 					}
 				}, {
 					type: "input",
-					name: "repositoryUrl",
-					message: "What is your repo url?",
-					"default": "https://github.com/" + this.properties.organizationNameCamelCase + "/" + this.properties.name + ".git"
+					name: "sauceLabsUserName",
+					message: "Please provide the user name for Sauce Labs (we will encrypt it into the travis yaml for you)",
+					"default": "" + this.properties.organizationNameCamelCase,
+					when: function when() {
+						return _this.properties.sauceLabs;
+					}
 				}, {
 					type: "input",
-					name: "issueTrackerUrl",
-					message: "What is the issue tracker url for the component?",
-					"default": "https://github.com/" + this.properties.organizationNameCamelCase + "/" + this.properties.name + "/issues"
-				}, {
-					type: "input",
-					name: "homepage",
-					message: "What is the component homepage?",
-					"default": "https://github.com/" + this.properties.organizationNameCamelCase + "/" + this.properties.name
+					name: "sauceLabsAccessToken",
+					message: "Paste here the access token for Sauce Labs (we will encrypt it for you, too)",
+					"default": "",
+					when: function when() {
+						return _this.properties.sauceLabs;
+					}
 				}];
 
 				this.prompt(prompts, (function (newProperties) {
+					// Object.assign(this.properties, newProperties);
 					this.properties.floobitsWorkspace = newProperties.floobitsWorkspace;
 					this.properties.repositoryUrl = newProperties.repositoryUrl;
 					this.properties.issueTrackerUrl = newProperties.issueTrackerUrl;
 					this.properties.homepage = newProperties.homepage;
-					done();
+					if (this.properties.sauceLabs) {
+						console.log("using travis repoSuffix ", this.properties.repoSuffix);
+						(0, _child_process.exec)("../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js -r " + this.properties.repoSuffix + " SAUCE_USERNAME=" + newProperties.sauceLabsUserName + " SAUCE_ACCESS_TOKEN=" + newProperties.sauceLabsAccessToken, function execCallback(error, standardOutput, stderr) {
+							console.log("standardOutput is ", { stdout: standardOutput, error: error, stderr: stderr });
+							done();
+						});
+						// coomented because of the issue
+						// https://github.com/pwmckenna/node-travis-encrypt/issues/10
+						// encrypt(this.properties.repoSuffix,
+						//     `SAUCE_USERNAME=${newProperties.sauceLabsUserName} SAUCE_ACCESS_TOKEN=${newProperties.sauceLabsAccessToken}`,
+						//     function encryptCallback(error, data) {
+						//       console.log("encrypt sauce labs", {data: data});
+						//       this.properties.travisEnvironment = data;
+						//       done();
+						//     }.bind(this)
+						//   );
+					} else {
+						done();
+					}
 				}).bind(this));
 			}).bind(this));
 		}
@@ -132,10 +174,10 @@ var Component = (function (_yeoman$generators$Base) {
 				floobitsWorkspace: this.properties.floobitsWorkspace,
 				componentNamePascalCase: (0, _jargon2["default"])(this.properties.name).pascal.toString(),
 				organizationName: this.properties.organizationName,
-				travisKey: null,
 				homepage: this.properties.homepage,
 				repositoryUrl: this.properties.repositoryUrl,
-				issueTrackerUrl: this.properties.issueTrackerUrl
+				issueTrackerUrl: this.properties.issueTrackerUrl,
+				travisEnvironment: this.properties.travisEnvironment
 			};
 
 			// copy files
@@ -161,15 +203,18 @@ var Component = (function (_yeoman$generators$Base) {
 			files.forEach(function (templatePath) {
 				var newName = templatePath.replace("_", "");
 				newName = newName.replace("##componentName##", _this2.context.name);
-				_this2.fs.copyTpl(_this2.templatePath(templatePath), _this2.destinationPath("" + _this2.context.name + "/" + newName), _this2.context);
+				_this2.fs.copyTpl(_this2.templatePath(templatePath), _this2.destinationPath("" + newName), _this2.context);
 			}, this);
 		}
 	}, {
 		key: "install",
 		value: function install() {
 			this.installDependencies({
+				skipInstall: this.options["skip-install"],
 				callback: (function callbackInstallDependencies() {
-					this.spawnCommand("gulp", ["build"]);
+					if (!this.skipInstall) {
+						this.spawnCommand("gulp", ["test"]);
+					}
 				}).bind(this)
 			});
 		}

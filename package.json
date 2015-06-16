@@ -4,7 +4,7 @@
   "description": "generator for open source components",
   "main": "generators/app/index.js",
   "scripts": {
-    "test": "gulp run-spec"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -40,15 +40,16 @@
     "gulp-babel": "^5.1.0",
     "gulp-istanbul": "^0.10.0",
     "gulp-mocha": "^2.1.1",
+    "gulp-run": "^1.6.8",
     "mocha": "^2.2.5"
   },
   "dependencies": {
     "babel": "^5.5.8",
     "jargon": "^0.1.14",
     "run-sequence": "^1.1.0",
+    "travis-encrypt": "pwmckenna/node-travis-encrypt",
     "yeoman-generator": "^0.20.1",
     "yo": "^1.4.7",
     "yosay": "^1.0.4"
   }
 }
-

@@ -26,6 +26,8 @@ npm test
 ## Use With Yeoman
 
 ```
+mkdir myNewOssComponent
+cd myNewOssComponent
 yo oss-component
 ```
 

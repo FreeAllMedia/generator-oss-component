@@ -10,4 +10,5 @@ before_script:
 - npm install
 env:
   global:
-  - secure: <%= travisKey %>
+  - secure: <%= sauceUserName %>
+  - secure: <%= sauceLabsAccessToken %>
