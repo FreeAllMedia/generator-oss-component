@@ -35,6 +35,16 @@ npm test
 ```
 mkdir myNewOssComponent
 cd myNewOssComponent
+git init
+git push origin master
+
+//... link it with travis... using travis-ci.org
+//... create your sauce lab user
+//... create your floobits workspace
+//... configure codeclimate
+//... setup your badges
+// and then run... (so it generates the travis keys for you)
+
 yo oss-component
 ```
 
