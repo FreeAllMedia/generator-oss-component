@@ -14,6 +14,13 @@
 npm install -g generator-oss-component
 ```
 
+or (avoiding npm install and gulp test)
+
+```
+npm install -g generator-oss-component --skip-install
+```
+
+
 ## Run Automated Tests
 
 We automatically test every release against node versions `0.10`, `0.11`, `0.12`, and `iojs-v2`. If you are using a different environment, run our tests to ensure that it works as intended for you.

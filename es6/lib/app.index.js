@@ -2,9 +2,10 @@ import yeoman from "yeoman-generator";
 import yosay from "yosay";
 import inflect from "jargon";
 import encrypt from "travis-encrypt";
-import {exec} from "child_process";
+import childProcess from "child_process";
 
-const copyFiles = Symbol();
+const copyFiles = Symbol(),
+  installAndTest = Symbol();
 
 export default class Component extends yeoman.generators.Base {
 	initializing() {
@@ -29,26 +30,41 @@ export default class Component extends yeoman.generators.Base {
 			message: "What is the component description?",
 			default: "This is a component to say something."
 		},{
-			type: "input",
-			name: "organizationName",
-			message: "What is your organization name?",
-			default: "Free All Media LLC"
-		},{
+      type: "input",
+      name: "organizationName",
+      message: "What is your organization name?",
+      default: "Free All Media"
+    },{
+      type: "input",
+      name: "organizationType",
+      message: "What is your organization type?",
+      default: "LLC"
+    },{
 			type: "confirm",
 			name: "floobits",
-			message: "There is a Floobits workspace for this repo?",
+			message: "There is a Floobits workspace for this repo (Development Real-time Collaboration)?",
 			default: true
 		},{
 			type: "confirm",
 			name: "sauceLabs",
-			message: "do you want to add SauceLabs?",
+			message: "do you want to add SauceLabs (Cross Browser Testing)?",
 			default: true
 		},{
-			type: "confirm",
-			name: "travis",
-			message: "do you want to add Travis support?",
-			default: true
-		}];
+      type: "confirm",
+      name: "travis",
+      message: "do you want to add Travis (Continuous Integration) support?",
+      default: true
+    },{
+      type: "confirm",
+      name: "codeClimate",
+      message: "do you want to add Code Climate (Code Quality) support?",
+      default: true
+    },{
+      type: "confirm",
+      name: "david",
+      message: "do you want to add David (Dependency Management) support?",
+      default: true
+    }];
 
 		// https://github.com/FreeAllMedia/jargon
 		this.prompt(prompts, function (newProperties) {
@@ -84,7 +100,7 @@ export default class Component extends yeoman.generators.Base {
         },{
           type: "input",
           name: "sauceLabsUserName",
-          message: "Please provide the user name for Sauce Labs (we will encrypt it into the travis yaml for you)",
+          message: "Please provide the user name for Sauce Labs (if the Travis slug is already linked, we will encrypt it into the travis yaml for you)",
           default: `${this.properties.organizationNameCamelCase}`,
           when:
             () => {
@@ -99,35 +115,38 @@ export default class Component extends yeoman.generators.Base {
             () => {
               return this.properties.sauceLabs;
             }
+        },{
+          type: "input",
+          name: "codeClimateRepo",
+          message: "Paste here the Code Climate Repo code",
+          default: ``,
+          when:
+            () => {
+              return this.properties.codeClimate;
+            }
+        },{
+          type: "input",
+          name: "codeClimateBadge",
+          message: "Paste here the Code Climate Badge code",
+          default: ``,
+          when:
+            () => {
+              return this.properties.codeClimate;
+            }
+        },{
+          type: "input",
+          name: "davidRepo",
+          message: "Confirm or paste a new David url",
+          default: `https://david-dm.org/${this.properties.repoSuffix}`,
+          when:
+            () => {
+              return this.properties.david;
+            }
         }];
 
 			this.prompt(prompts, function (newProperties) {
-        // Object.assign(this.properties, newProperties);
-				this.properties.floobitsWorkspace = newProperties.floobitsWorkspace;
-				this.properties.repositoryUrl = newProperties.repositoryUrl;
-				this.properties.issueTrackerUrl = newProperties.issueTrackerUrl;
-				this.properties.homepage = newProperties.homepage;
-        if(this.properties.sauceLabs) {
-          console.log("using travis repoSuffix ", this.properties.repoSuffix);
-          exec(`../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js -r ${this.properties.repoSuffix} SAUCE_USERNAME=${newProperties.sauceLabsUserName} SAUCE_ACCESS_TOKEN=${newProperties.sauceLabsAccessToken}`,
-            function execCallback(error, standardOutput, stderr) {
-              console.log("standardOutput is ", {stdout: standardOutput, error: error, stderr: stderr});
-              done();
-            }
-          );
-          // coomented because of the issue
-          // https://github.com/pwmckenna/node-travis-encrypt/issues/10
-          // encrypt(this.properties.repoSuffix,
-          //     `SAUCE_USERNAME=${newProperties.sauceLabsUserName} SAUCE_ACCESS_TOKEN=${newProperties.sauceLabsAccessToken}`,
-          //     function encryptCallback(error, data) {
-          //       console.log("encrypt sauce labs", {data: data});
-          //       this.properties.travisEnvironment = data;
-          //       done();
-          //     }.bind(this)
-          //   );
-        } else {
-          done();
-        }
+        Object.assign(this.properties, newProperties);
+        done();
 			}.bind(this));
 		}.bind(this));
 	}
@@ -136,22 +155,28 @@ export default class Component extends yeoman.generators.Base {
     this.context = {
 			name: this.properties.name,
 			description: this.properties.description,
+      floobits: this.properties.floobits,
 			floobitsWorkspace: this.properties.floobitsWorkspace,
+      organizationNamePascalCase: this.properties.organizationNamePascalCase,
 			componentNamePascalCase: inflect(this.properties.name).pascal.toString(),
 			organizationName: this.properties.organizationName,
+      organizationType: this.properties.organizationType,
 			homepage: this.properties.homepage,
 			repositoryUrl: this.properties.repositoryUrl,
 			issueTrackerUrl: this.properties.issueTrackerUrl,
-      sauceUserName: this.properties.sauceLabsUserName || "",
-      sauceLabsAccessToken: this.properties.sauceLabsAccessToken || ""
+      travis: this.properties.travis,
+      sauceLabs: this.properties.sauceLabs,
+      sauceLabsUserName: this.properties.sauceLabsUserName || "",
+      sauceLabsAccessToken: this.properties.sauceLabsAccessToken || "",
+      codeClimate: this.properties.codeClimate,
+      codeClimateBadge: this.properties.codeClimateBadge || "",
+      codeClimateRepo: this.properties.codeClimateRepo || "",
+      david: this.properties.david,
+      davidRepo: this.properties.davidRepo || ""
 		};
 
 		// copy files
-		this[copyFiles](["_.codeclimate.yml",
-			"_.sauce.json",
-			"_.eslintrc",
-			"_.floo",
-			"_.flooignore",
+		this[copyFiles](["_.eslintrc",
 			"_.gitignore",
 			"_.jshintrc",
 			"_.karma.conf.js",
@@ -161,6 +186,7 @@ export default class Component extends yeoman.generators.Base {
 			"_gulpfile.babel.js",
 			"_index.js",
 			"_paths.json",
+      "_.editorconfig",
 			"tasks/_build.js",
 			"tasks/_build-lib.js",
 			"tasks/_build-spec.js",
@@ -170,6 +196,10 @@ export default class Component extends yeoman.generators.Base {
 			"es6/lib/_##componentName##.js",
 			"es6/spec/_##componentName##.spec.js"]
 		);
+
+    if(this.properties.codeClimate) {
+      this[copyFiles](["_.codeclimate.yml"]);
+    }
 
 		if(this.properties.floobits) {
 			this[copyFiles](["_.floo", "_.flooignore"]);
@@ -184,27 +214,52 @@ export default class Component extends yeoman.generators.Base {
 		}
 	}
 
-	[copyFiles](files) {
-		files.forEach((templatePath) => {
-			let newName = templatePath.replace("_", "");
-			newName = newName.replace("##componentName##", this.context.name);
-			this.fs.copyTpl(
-				this.templatePath(templatePath),
-				this.destinationPath(`${newName}`),
-				this.context
-			);
-		}, this);
+	install() {
+    //generate travis crypted environment vars and append to the travis YAML
+    if(this.properties.sauceLabs) {
+      const commandString = `node`;
+      const result = childProcess.spawnSync(
+        commandString,
+        [`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-ar`, `${this.properties.repoSuffix}`, `SAUCE_USERNAME=${this.properties.sauceLabsUserName}`, `SAUCE_ACCESS_TOKEN=${this.properties.sauceLabsAccessToken}`],
+        {
+          cwd: `${this.destinationRoot()}`,
+          encoding: "utf8"
+        }
+      );
+      if(result.error) {
+        process.stdout.write("\nWARNING: TRAVIS ENCRYPT ERROR \n", result.error);
+      } else if (result.stderr) {
+        process.stdout.write(`\nWARNING: TRAVIS ENCRYPT COMMAND ERROR (maybe repo not found at ${this.properties.repoSuffix}?) \n`);
+      }
+    }
+
+    this[installAndTest]();
 	}
 
-	install() {
-		this.installDependencies({
+  //PRIVATE METHODS
+
+  [copyFiles](files) {
+    files.forEach((templatePath) => {
+      let newName = templatePath.replace("_", "");
+      newName = newName.replace("##componentName##", this.context.name);
+      this.fs.copyTpl(
+        this.templatePath(templatePath),
+        this.destinationPath(`${newName}`),
+        this.context
+      );
+    }, this);
+  }
+
+  [installAndTest]() {
+    this.installDependencies({
       skipInstall: this.options['skip-install'],
-			callback: function callbackInstallDependencies() {
-        if(!this.skipInstall) {
+      callback: function callbackInstallDependencies() {
+        //gulp test execution if there is a local gulp there already
+        if(!this.options['skip-install']) {
           this.spawnCommand("gulp", ["test"]);
         }
-			}.bind(this)
-		});
-	}
+      }.bind(this)
+    });
+  }
 
 }
