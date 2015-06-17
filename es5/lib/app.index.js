@@ -180,7 +180,16 @@ var Component = (function (_yeoman$generators$Base) {
         }];
 
         this.prompt(prompts, (function (newProperties) {
-          Object.assign(this.properties, newProperties);
+          // Object.assign(this.properties, newProperties);
+          this.properties.floobitsWorkspace = newProperties.floobitsWorkspace;
+          this.properties.repositoryUrl = newProperties.repositoryUrl;
+          this.properties.issueTrackerUrl = newProperties.issueTrackerUrl;
+          this.properties.homepage = newProperties.homepage;
+          this.properties.sauceLabsAccessToken = newProperties.sauceLabsAccessToken;
+          this.properties.sauceLabsUserName = newProperties.sauceLabsUserName;
+          this.properties.codeClimateRepo = newProperties.codeClimateRepo;
+          this.properties.codeClimateBadge = newProperties.codeClimateBadge;
+          this.properties.davidRepo = newProperties.davidRepo;
           done();
         }).bind(this));
       }).bind(this));
