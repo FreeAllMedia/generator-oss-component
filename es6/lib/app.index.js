@@ -126,6 +126,15 @@ export default class Component extends yeoman.generators.Base {
             }
         }, {
           type: "input",
+          name: "codeClimateBadge",
+          message: "Paste here the Code Climate Badge code",
+          default: ``,
+          when:
+            () => {
+              return this.properties.codeClimate;
+            }
+        }, {
+          type: "input",
           name: "davidRepo",
           message: "Confirm or paste a new David url",
           default: `https://david-dm.org/${this.properties.repoSuffix}`,
