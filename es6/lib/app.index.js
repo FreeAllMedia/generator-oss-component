@@ -24,42 +24,42 @@ export default class Component extends yeoman.generators.Base {
 			name: "name",
 			message: "What is the component name? (camel case please => exactlyLikeThis)",
 			default: "myComponent"
-		},{
+		}, {
 			type: "input",
 			name: "description",
 			message: "What is the component description?",
 			default: "This is a component to say something."
-		},{
+		}, {
       type: "input",
       name: "organizationName",
       message: "What is your organization name?",
       default: "Free All Media"
-    },{
+    }, {
       type: "input",
       name: "organizationType",
       message: "What is your organization type?",
       default: "LLC"
-    },{
+    }, {
 			type: "confirm",
 			name: "floobits",
 			message: "There is a Floobits workspace for this repo (Development Real-time Collaboration)?",
 			default: true
-		},{
+		}, {
 			type: "confirm",
 			name: "sauceLabs",
 			message: "do you want to add SauceLabs (Cross Browser Testing)?",
 			default: true
-		},{
+		}, {
       type: "confirm",
       name: "travis",
       message: "do you want to add Travis (Continuous Integration) support?",
       default: true
-    },{
+    }, {
       type: "confirm",
       name: "codeClimate",
       message: "do you want to add Code Climate (Code Quality) support?",
       default: true
-    },{
+    }, {
       type: "confirm",
       name: "david",
       message: "do you want to add David (Dependency Management) support?",
@@ -78,17 +78,17 @@ export default class Component extends yeoman.generators.Base {
 					name: "repositoryUrl",
 					message: "What is your repo url?",
 					default: `https://github.com/${this.properties.repoSuffix}.git`
-				},{
+				}, {
 					type: "input",
 					name: "issueTrackerUrl",
 					message: "What is the issue tracker url for the component?",
 					default: `https://github.com/${this.properties.repoSuffix}/issues`
-				},{
+				}, {
           type: "input",
           name: "homepage",
           message: "What is the component homepage?",
           default: `https://github.com/${this.properties.repoSuffix}`
-        },{
+        }, {
           type: "input",
           name: "floobitsWorkspace",
           message: "What is the floobits workspace url?",
@@ -97,7 +97,7 @@ export default class Component extends yeoman.generators.Base {
             () => {
               return this.properties.floobits;
             }
-        },{
+        }, {
           type: "input",
           name: "sauceLabsUserName",
           message: "Please provide the user name for Sauce Labs (if the Travis slug is already linked, we will encrypt it into the travis yaml for you)",
@@ -106,7 +106,7 @@ export default class Component extends yeoman.generators.Base {
             () => {
               return this.properties.sauceLabs;
             }
-        },{
+        }, {
           type: "input",
           name: "sauceLabsAccessToken",
           message: "Paste here the access token for Sauce Labs (we will encrypt it for you, too)",
@@ -115,7 +115,7 @@ export default class Component extends yeoman.generators.Base {
             () => {
               return this.properties.sauceLabs;
             }
-        },{
+        }, {
           type: "input",
           name: "codeClimateRepo",
           message: "Paste here the Code Climate Repo code",
@@ -124,16 +124,7 @@ export default class Component extends yeoman.generators.Base {
             () => {
               return this.properties.codeClimate;
             }
-        },{
-          type: "input",
-          name: "codeClimateBadge",
-          message: "Paste here the Code Climate Badge code",
-          default: ``,
-          when:
-            () => {
-              return this.properties.codeClimate;
-            }
-        },{
+        }, {
           type: "input",
           name: "davidRepo",
           message: "Confirm or paste a new David url",

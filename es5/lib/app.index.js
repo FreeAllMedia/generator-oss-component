@@ -163,14 +163,6 @@ var Component = (function (_yeoman$generators$Base) {
           }
         }, {
           type: "input",
-          name: "codeClimateBadge",
-          message: "Paste here the Code Climate Badge code",
-          "default": "",
-          when: function when() {
-            return _this.properties.codeClimate;
-          }
-        }, {
-          type: "input",
           name: "davidRepo",
           message: "Confirm or paste a new David url",
           "default": "https://david-dm.org/" + this.properties.repoSuffix,

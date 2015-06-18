@@ -1,6 +1,6 @@
 {
   "name": "<%= name %>",
-  "version": "0.1.14",
+  "version": "0.1.0",
   "description": "<%= description %>",
   "main": "index.js",
   "scripts": {
@@ -27,9 +27,7 @@
     "url": "<%= issueTrackerUrl %>"
   },
   "homepage": "<%= homepage %>",
-  "dependencies": {
-    "inflection": "^1.7.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel": "^5.5.6",
     "chai": "^3.0.0",
