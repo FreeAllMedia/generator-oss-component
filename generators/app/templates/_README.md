@@ -27,7 +27,7 @@ const <%= name %> = new <%= componentNamePascalCase %>;
 ![iojs 2.x.x](https://img.shields.io/badge/iojs-2.x.x-brightgreen.svg) ![iojs 1.x.x](https://img.shields.io/badge/iojs-1.x.x-brightgreen.svg)
 
 <% if(sauceLabs) { %>
-  [![Sauce Test Status](https://saucelabs.com/browser-matrix/<%= name %>.svg)](https://saucelabs.com/u/<%= name %>)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/<%= name %>.svg)](https://saucelabs.com/u/<%= name %>)
 <% } %>
 
 *If your platform is not listed above, you can test your local environment for compatibility by copying and pasting the following commands into your terminal:*
@@ -35,7 +35,7 @@ const <%= name %> = new <%= componentNamePascalCase %>;
 ```
 npm install <%= name %>
 cd node_modules/<%= name %>
-gulp test
+gulp test-local
 ```
 
 # Installation
