@@ -8,18 +8,10 @@ import <%= componentNamePascalCase %> from "<%= name %>";
 const <%= name %> = new <%= componentNamePascalCase %>;
 <%= name %>.saySomething(); // will output "Something"
 ```
-<% if(travis) { %>
-[![Build Status](https://travis-ci.org/<%= organizationNamePascalCase %>/<%= name %>.png?branch=master)](https://travis-ci.org/<%= organizationNamePascalCase %>/<%= name %>)
-<% } %>
-<% if(codeClimate) { %>
-[![Test Coverage](https://codeclimate.com/repos/<%= codeClimateRepo %>/badges/<%= codeClimateBadge %>/coverage.svg)](https://codeclimate.com/repos/<%= codeClimateRepo %>/coverage)
-[![Code Climate](https://codeclimate.com/repos/<%= codeClimateRepo %>/badges/<%= codeClimateBadge %>/gpa.svg)](https://codeclimate.com/repos/<%= codeClimateRepo %>/feed)
-<% } %>
-<% if(david) { %>
-[![Dependency Status](<%= davidRepo %>.png?theme=shields.io)](<%= davidRepo %>?theme=shields.io) [![Dev Dependency Status](<%= davidRepo %>/dev-status.svg)](<%= davidRepo %>?theme=shields.io#info=devDependencies)
-<% } %>
 
-# Compatibility
+# Quality and Compatibility
+
+<% if(travis) { %>[![Build Status](https://travis-ci.org/<%= organizationNamePascalCase %>/<%= name %>.png?branch=master)](https://travis-ci.org/<%= organizationNamePascalCase %>/<%= name %>)<% } %> <% if(codeClimate) { %>[![Test Coverage](https://codeclimate.com/repos/<%= codeClimateRepo %>/badges/<%= codeClimateBadge %>/coverage.svg)](https://codeclimate.com/repos/<%= codeClimateRepo %>/coverage) [![Code Climate](https://codeclimate.com/repos/<%= codeClimateRepo %>/badges/<%= codeClimateBadge %>/gpa.svg)](https://codeclimate.com/repos/<%= codeClimateRepo %>/feed)<% } %> <% if(david) { %>[![Dependency Status](<%= davidRepo %>.png?theme=shields.io)](<%= davidRepo %>?theme=shields.io) [![Dev Dependency Status](<%= davidRepo %>/dev-status.svg)](<%= davidRepo %>?theme=shields.io#info=devDependencies)<% } %>
 
 *Every single build and release is automatically tested on the following platforms:*
 
