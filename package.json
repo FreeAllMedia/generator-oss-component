@@ -1,0 +1,56 @@
+{
+  "name": "generator-oss-component",
+  "version": "0.1.0",
+  "description": "generator for open source components",
+  "main": "generators/app/index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreeAllMedia/generator-oss-component.git"
+  },
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "author": "Free All Media LLC",
+  "license": "MIT",
+  "contributors": [
+    {
+      "name": "nicosommi",
+      "email": "nicosommi@gmail.com"
+    },
+    {
+      "name": "dcrockwell",
+      "email": "dcautomates@gmail.com"
+    },
+    {
+      "name": "paulgoggin",
+      "email": "pgoggin@gmail.com"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/FreeAllMedia/generator-oss-component/issues"
+  },
+  "homepage": "https://github.com/FreeAllMedia/generator-oss-component#readme",
+  "devDependencies": {
+    "babel-core": "^5.5.8",
+    "chai": "^3.0.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-istanbul": "^0.10.0",
+    "gulp-mocha": "^2.1.1",
+    "gulp-run": "^1.6.8",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.3"
+  },
+  "dependencies": {
+    "babel": "^5.5.8",
+    "jargon": "^0.1.14",
+    "run-sequence": "^1.1.0",
+    "travis-encrypt": "pwmckenna/node-travis-encrypt",
+    "yeoman-generator": "^0.20.1",
+    "yo": "^1.4.7",
+    "yosay": "^1.0.4"
+  }
+}

@@ -1,0 +1,3 @@
+gulpfile.js
+component/templates/**/*.js
+service/templates/**/*.js
