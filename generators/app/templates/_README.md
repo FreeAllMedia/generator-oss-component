@@ -9,14 +9,14 @@ const <%= name %> = new <%= componentNamePascalCase %>;
 <%= name %>.saySomething(); // will output "Something"
 ```
 <% if(travis) { %>
-  [![Build Status](https://travis-ci.org/<%= organizationNamePascalCase %>/<%= name %>.png?branch=master)](https://travis-ci.org/<%= organizationNamePascalCase %>/<%= name %>)
+[![Build Status](https://travis-ci.org/<%= organizationNamePascalCase %>/<%= name %>.png?branch=master)](https://travis-ci.org/<%= organizationNamePascalCase %>/<%= name %>)
 <% } %>
 <% if(codeClimate) { %>
-  [![Test Coverage](https://codeclimate.com/repos/<%= codeClimateRepo %>/badges/<%= codeClimateBadge %>/coverage.svg)](https://codeclimate.com/repos/<%= codeClimateRepo %>/coverage)
-  [![Code Climate](https://codeclimate.com/repos/<%= codeClimateRepo %>/badges/<%= codeClimateBadge %>/gpa.svg)](https://codeclimate.com/repos/<%= codeClimateRepo %>/feed)
+[![Test Coverage](https://codeclimate.com/repos/<%= codeClimateRepo %>/badges/<%= codeClimateBadge %>/coverage.svg)](https://codeclimate.com/repos/<%= codeClimateRepo %>/coverage)
+[![Code Climate](https://codeclimate.com/repos/<%= codeClimateRepo %>/badges/<%= codeClimateBadge %>/gpa.svg)](https://codeclimate.com/repos/<%= codeClimateRepo %>/feed)
 <% } %>
 <% if(david) { %>
-  [![Dependency Status](<%= davidRepo %>.png?theme=shields.io)](<%= davidRepo %>?theme=shields.io) [![Dev Dependency Status](<%= davidRepo %>/dev-status.svg)](<%= davidRepo %>?theme=shields.io#info=devDependencies)
+[![Dependency Status](<%= davidRepo %>.png?theme=shields.io)](<%= davidRepo %>?theme=shields.io) [![Dev Dependency Status](<%= davidRepo %>/dev-status.svg)](<%= davidRepo %>?theme=shields.io#info=devDependencies)
 <% } %>
 
 # Compatibility
@@ -88,22 +88,22 @@ npm test
 ```
 
 <% if(sauceLabs) { %>
-  ### SauceLabs Credentials
+### SauceLabs Credentials
 
-  We've setup our tests to automatically detect whether or not you have our saucelabs credentials installed in your environment (`process.env.SAUCE_USERNAME`).
+We've setup our tests to automatically detect whether or not you have our saucelabs credentials installed in your environment (`process.env.SAUCE_USERNAME`).
 
-  If our saucelabs credentials are not installed, the tests are setup to automatically detect all browsers you have installed on your local system, then use them to run the tests.
+If our saucelabs credentials are not installed, the tests are setup to automatically detect all browsers you have installed on your local system, then use them to run the tests.
 
-  #### Obtaining Our SauceLabs Credentials
+#### Obtaining Our SauceLabs Credentials
 
-  If you'd like to develop <%= componentNamePascalCase %>.js using SauceLabs, you need only create a new entry in our [issue tracker](<%= issueTrackerUrl %>) asking for our SauceLabs credentials.
+If you'd like to develop <%= componentNamePascalCase %>.js using SauceLabs, you need only create a new entry in our [issue tracker](<%= issueTrackerUrl %>) asking for our SauceLabs credentials.
 
-  We'll send over all credentials specific to this project so that you can perform comprehensive cross-platform tests.
+We'll send over all credentials specific to this project so that you can perform comprehensive cross-platform tests.
 <% } %>
 <% if(floobits) { %>
-  ## Public Shared Floobits Workspace
+## Public Shared Floobits Workspace
 
-  Whenever we're working on <%= componentNamePascalCase %>.js, we connect to a public workspace on FlooBits that lets you see and interact with the developers. Feel free to stop by, say hello, and offer suggestions!
+Whenever we're working on <%= componentNamePascalCase %>.js, we connect to a public workspace on FlooBits that lets you see and interact with the developers. Feel free to stop by, say hello, and offer suggestions!
 
-  <%= floobitsWorkspace %>
+<%= floobitsWorkspace %>
 <% } %>
