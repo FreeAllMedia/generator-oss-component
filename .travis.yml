@@ -1,6 +1,8 @@
 sudo: false
 language: node_js
 node_js:
-  - 'iojs'
+  - 'iojs-v1'
+  - 'iojs-v2'
   - '0.12'
-  - '0.10'
+  - '0.11'
+  # - '0.10' Fails. See: https://www.pivotaltracker.com/story/show/97247190
