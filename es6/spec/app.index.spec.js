@@ -1,6 +1,8 @@
 import path from "path";
 import {assert, test as helpers} from "yeoman-generator";
 import os from "os";
+import fs from "fs";
+import rimraf from "rimraf";
 import sinon from "sinon";
 
 describe("oss-component generator", function() {
@@ -21,7 +23,8 @@ describe("oss-component generator", function() {
     davidAnswer,
     davidRepoAnswer,
     codeClimateAnswer,
-    codeClimateRepoAnswer;
+    codeClimateRepoAnswer,
+    codeClimateRepoTokenAnswer;
   this.timeout(10 * 1000);
 
   before(() => {
@@ -41,33 +44,38 @@ describe("oss-component generator", function() {
     davidRepoAnswer = "david-dm.org/somerepo";
     codeClimateAnswer = true;
     codeClimateRepoAnswer = "someCodeClimateRepo";
+    codeClimateRepoTokenAnswer = "someCodeClimateRepoTokenAnswer";
   });
 
   describe("(with all false)", () => {
 
     before(done => {
-      falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
-        .inDir(path.join(os.tmpdir(), "/temp-test-false"))
-        .withOptions({ "skip-install": true })
-        .withPrompts({
-          name: name,
-          description: descriptionAnswer,
-          organizationName: organizationNameAnswer,
-          floobits: false,
-          sauceLabs: false,
-          travis: false,
-          repositoryUrl: repositoryUrlAnswer,
-          issueTrackerUrl: issueTrackerUrlAnswer,
-          homepage: homepageAnswer,
-          david: false,
-          codeClimate: false
-        })
-        .on("end", done);
+      const basePath = path.join(os.tmpdir(), "/temp-test-false");
+      //create initial files and dires with a certain content
+      rimraf(basePath, () => {
+          falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
+            .inDir(basePath)
+            .withOptions({ "skip-install": true })
+            .withPrompts({
+              name: name,
+              description: descriptionAnswer,
+              organizationName: organizationNameAnswer,
+              floobits: false,
+              sauceLabs: false,
+              travis: false,
+              repositoryUrl: repositoryUrlAnswer,
+              issueTrackerUrl: issueTrackerUrlAnswer,
+              homepage: homepageAnswer,
+              david: false,
+              codeClimate: false
+            })
+            .on("end", done);
+        });
     });
 
     describe("(code quality)", () => {
       it("should not create files for code climate support", () => {
-        assert.noFile([`.codeclimate.yml`]);
+        assert.noFile([`.codeclimate.yml`, `tasks/codeClimate.js`]);
       });
 
       it("should not add nothing with codeclimate to the readme.md", () => {
@@ -116,28 +124,33 @@ describe("oss-component generator", function() {
 
   describe("(with all true)", () => {
     before(done => {
-      runningContext = helpers.run(path.join(__dirname, "../../generators/app"))
-        .inDir(path.join(os.tmpdir(), "/temp-test"))
-        .withOptions({ "skip-install": true })
-        .withPrompts({
-          name: name,
-          description: descriptionAnswer,
-          organizationName: organizationNameAnswer,
-          floobits: floobitsAnswer,
-          sauceLabs: sauceLabsAnswer,
-          travis: travisAnswer,
-          floobitsWorkspace: floobitsWorkspaceAnswer,
-          repositoryUrl: repositoryUrlAnswer,
-          issueTrackerUrl: issueTrackerUrlAnswer,
-          homepage: homepageAnswer,
-          sauceLabsAccessToken: sauceLabsAccessTokenAnswer,
-          sauceLabsUserName: sauceLabsUserNameAnswer,
-          david: davidAnswer,
-          davidRepo: davidRepoAnswer,
-          codeClimate: codeClimateAnswer,
-          codeClimateRepo: codeClimateRepoAnswer
-        })
-        .on("end", done);
+      const basePath = path.join(os.tmpdir(), "/temp-test");
+      rimraf(basePath, () => {
+        runningContext = helpers.run(path.join(__dirname, "../../generators/app"))
+          .inDir(basePath)
+          .withOptions({ "skip-install": true })
+          .withPrompts({
+            name: name,
+            description: descriptionAnswer,
+            organizationName: organizationNameAnswer,
+            floobits: floobitsAnswer,
+            sauceLabs: sauceLabsAnswer,
+            travis: travisAnswer,
+            floobitsWorkspace: floobitsWorkspaceAnswer,
+            repositoryUrl: repositoryUrlAnswer,
+            issueTrackerUrl: issueTrackerUrlAnswer,
+            homepage: homepageAnswer,
+            sauceLabsAccessToken: sauceLabsAccessTokenAnswer,
+            sauceLabsUserName: sauceLabsUserNameAnswer,
+            david: davidAnswer,
+            davidRepo: davidRepoAnswer,
+            codeClimate: codeClimateAnswer,
+            codeClimateRepo: codeClimateRepoAnswer,
+            codeClimateRepoToken: codeClimateRepoTokenAnswer
+          })
+          .on("end", done);
+      })
+
     });
 
     describe("(template context)", () => {
@@ -185,6 +198,10 @@ describe("oss-component generator", function() {
         it("should set the context for codeClimateRepo workspace correctly", () => {
           runningContext.generator.context.codeClimateRepo.should.equal(codeClimateRepoAnswer);
         });
+
+        it("should set the context for codeClimateRepoToken workspace correctly", () => {
+          runningContext.generator.context.codeClimateRepoToken.should.equal(codeClimateRepoTokenAnswer);
+        });
       });
 
       describe("(david)", () => {
@@ -214,7 +231,7 @@ describe("oss-component generator", function() {
 
     describe("(licensing)", () => {
       it("should create a LICENSE file", () => {
-        assert.file([`LICENSE.md`]);
+        assert.file([`LICENSE`]);
       });
     });
 
@@ -232,7 +249,7 @@ describe("oss-component generator", function() {
 
     describe("(code quality)", () => {
       it("should create files for code climate support", () => {
-        assert.file([`.codeclimate.yml`]);
+        assert.file([`.codeclimate.yml`, `tasks/codeClimate.js`]);
         //autogenerated `lcov.info`
       });
 
@@ -337,6 +354,55 @@ describe("oss-component generator", function() {
           `es5/spec/${name}.spec.js`
         ]);
       });
+    });
+  });
+
+  describe("(updating)", () => {
+    before(done => {
+      const basePath = path.join(os.tmpdir(), "/temp-test-override");
+
+      falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
+        .inDir(basePath, () => {
+          //create README.md
+          //create package.json
+          //run generator
+          fs.mkdirSync(path.join(basePath, "es6"));
+          //create lib folder
+          fs.mkdirSync(path.join(basePath, "es6/lib"));
+          //create spec folder
+          fs.mkdirSync(path.join(basePath, "es6/spec"));
+        })
+        .withOptions({ "skip-install": true })
+        .withPrompts({
+          name: name,
+          description: descriptionAnswer,
+          organizationName: organizationNameAnswer,
+          floobits: false,
+          sauceLabs: false,
+          travis: false,
+          repositoryUrl: repositoryUrlAnswer,
+          issueTrackerUrl: issueTrackerUrlAnswer,
+          homepage: homepageAnswer,
+          david: false,
+          codeClimate: false
+        })
+        .on("end", done);
+    });
+
+    it("should not create anything on the lib folder if it already exists", () => {
+      assert.noFile(`es6/lib/${name}.js`);
+    });
+
+    it("should not create anything on the spec folder if it already exists", () => {
+      assert.noFile(`es6/spec/${name}.spec.js`);
+    });
+
+    xit("should not override the README.md if it already exists", () => {
+      assert.noFile(`README.md`);
+    });
+
+    xit("should not override the package.json if it already exists", () => {
+      assert.noFile(`package.json`);
     });
   });
 });

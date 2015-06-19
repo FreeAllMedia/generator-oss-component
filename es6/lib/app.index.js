@@ -3,8 +3,9 @@ import yosay from "yosay";
 import inflect from "jargon";
 import encrypt from "travis-encrypt";
 import childProcess from "child_process";
+import fs from "fs";
 
-const copyFiles = Symbol(),
+const copyFilesIf = Symbol(),
   installAndTest = Symbol();
 
 export default class Component extends yeoman.generators.Base {
@@ -135,6 +136,15 @@ export default class Component extends yeoman.generators.Base {
             }
         }, {
           type: "input",
+          name: "codeClimateRepoToken",
+          message: "Paste here the Code Climate Badge Token for test coverage",
+          default: ``,
+          when:
+            () => {
+              return this.properties.codeClimate;
+            }
+        }, {
+          type: "input",
           name: "davidRepo",
           message: "Confirm or paste a new David url",
           default: `https://david-dm.org/${this.properties.repoSuffix}`,
@@ -154,6 +164,7 @@ export default class Component extends yeoman.generators.Base {
         this.properties.sauceLabsUserName = newProperties.sauceLabsUserName;
         this.properties.codeClimateRepo = newProperties.codeClimateRepo;
         this.properties.codeClimateBadge = newProperties.codeClimateBadge;
+        this.properties.codeClimateRepoToken = newProperties.codeClimateRepoToken;
         this.properties.davidRepo = newProperties.davidRepo;
         done();
 			}.bind(this));
@@ -180,18 +191,35 @@ export default class Component extends yeoman.generators.Base {
       codeClimate: this.properties.codeClimate,
       codeClimateBadge: this.properties.codeClimateBadge || "",
       codeClimateRepo: this.properties.codeClimateRepo || "",
+      codeClimateRepoToken: this.properties.codeClimateRepoToken || "",
       david: this.properties.david,
       davidRepo: this.properties.davidRepo || ""
 		};
 
+    try {
+      let f = fs.statSync(this.destinationPath("es6/lib"));
+    } catch(e) {
+      this[copyFilesIf](["es6/lib/_##componentName##.js",
+        "es6/spec/_##componentName##.spec.js"]
+      );
+    }
+
+    this[copyFilesIf](["_README.md",
+      "_package.json"], function(destination) {
+        try {
+          fs.statSync(destination);
+          return false;
+        } catch(e) {
+          return true;
+        }
+      });
+
 		// copy files
-		this[copyFiles](["_.eslintrc",
+		this[copyFilesIf](["_.eslintrc",
 			"_.gitignore",
 			"_.jshintrc",
 			"_.karma.conf.js",
-			"_LICENSE.md",
-			"_README.md",
-			"_package.json",
+			"_LICENSE",
 			"_gulpfile.babel.js",
 			"_index.js",
 			"_paths.json",
@@ -201,25 +229,23 @@ export default class Component extends yeoman.generators.Base {
 			"tasks/_build-spec.js",
 			"tasks/_test-local.js",
 			"tasks/_test-browsers.js",
-			"tasks/_test.js",
-			"es6/lib/_##componentName##.js",
-			"es6/spec/_##componentName##.spec.js"]
+			"tasks/_test.js"]
 		);
 
     if(this.properties.codeClimate) {
-      this[copyFiles](["_.codeclimate.yml"]);
+      this[copyFilesIf](["_.codeclimate.yml", "tasks/_codeClimate.js",]);
     }
 
 		if(this.properties.floobits) {
-			this[copyFiles](["_.floo", "_.flooignore"]);
+			this[copyFilesIf](["_.floo", "_.flooignore"]);
 		}
 
 		if(this.properties.sauceLabs) {
-			this[copyFiles](["_.sauce.json"]);
+			this[copyFilesIf](["_.sauce.json"]);
 		}
 
 		if(this.properties.travis) {
-			this[copyFiles](["_.travis.yml"]);
+			this[copyFilesIf](["_.travis.yml"]);
 		}
 	}
 
@@ -229,7 +255,7 @@ export default class Component extends yeoman.generators.Base {
       const commandString = `node`;
       const result = childProcess.spawnSync(
         commandString,
-        [`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-ar`, `${this.properties.repoSuffix}`, `SAUCE_USERNAME=${this.properties.sauceLabsUserName}`, `SAUCE_ACCESS_TOKEN=${this.properties.sauceLabsAccessToken}`],
+        [`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-ar`, `${this.properties.repoSuffix}`, `SAUCE_USERNAME=${this.properties.sauceLabsUserName}`, `SAUCE_ACCESS_TOKEN=${this.properties.sauceLabsAccessToken}`, `CODECLIMATE_REPO_TOKEN=${this.properties.codeClimateRepo}`],
         {
           cwd: `${this.destinationRoot()}`,
           encoding: "utf8"
@@ -247,15 +273,17 @@ export default class Component extends yeoman.generators.Base {
 
   //PRIVATE METHODS
 
-  [copyFiles](files) {
+  [copyFilesIf](files, predicate = function() {return true; }) {
     files.forEach((templatePath) => {
       let newName = templatePath.replace("_", "");
       newName = newName.replace("##componentName##", this.context.name);
-      this.fs.copyTpl(
-        this.templatePath(templatePath),
-        this.destinationPath(`${newName}`),
-        this.context
-      );
+      if(predicate(this.destinationPath(newName))) {
+        this.fs.copyTpl(
+          this.templatePath(templatePath),
+          this.destinationPath(`${newName}`),
+          this.context
+        );
+      }
     }, this);
   }
 

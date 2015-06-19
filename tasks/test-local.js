@@ -1,7 +1,7 @@
 import gulp from "gulp";
 import mocha from "gulp-mocha";
 import istanbul from "gulp-istanbul";
-
+import codeClimate from "./codeClimate";
 import paths from "../paths.json";
 
 import chai from "chai";
@@ -14,8 +14,11 @@ gulp.task("test-local", ["build"], (cb) => {
     .on("finish", () => {
       gulp.src(paths.build.spec)
         .pipe(mocha())
-        .pipe(istanbul.writeReports({dir: "./", reporters: ["lcovonly"]})) // Creating the reports after tests ran
+        .pipe(istanbul.writeReports({dir: `${__dirname}/../`, reporters: ["text-summary", "lcovonly"]})) // Creating the reports after tests ran
 		//.pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } })) // Enforce a coverage of at least 90%
-        .on("end", cb);
+        .on("end", () => {
+          //send report to code climate
+          codeClimate("e77b8b386ca36e4502126d51be21a8b6f6099b93d6b20388fc85548eb5ac1070", cb);
+        });
     });
 });

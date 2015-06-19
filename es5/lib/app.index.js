@@ -32,7 +32,11 @@ var _child_process = require("child_process");
 
 var _child_process2 = _interopRequireDefault(_child_process);
 
-var copyFiles = Symbol(),
+var _fs = require("fs");
+
+var _fs2 = _interopRequireDefault(_fs);
+
+var copyFilesIf = Symbol(),
     installAndTest = Symbol();
 
 var Component = (function (_yeoman$generators$Base) {
@@ -163,6 +167,22 @@ var Component = (function (_yeoman$generators$Base) {
           }
         }, {
           type: "input",
+          name: "codeClimateBadge",
+          message: "Paste here the Code Climate Badge code",
+          "default": "",
+          when: function when() {
+            return _this.properties.codeClimate;
+          }
+        }, {
+          type: "input",
+          name: "codeClimateRepoToken",
+          message: "Paste here the Code Climate Badge Token for test coverage",
+          "default": "",
+          when: function when() {
+            return _this.properties.codeClimate;
+          }
+        }, {
+          type: "input",
           name: "davidRepo",
           message: "Confirm or paste a new David url",
           "default": "https://david-dm.org/" + this.properties.repoSuffix,
@@ -181,6 +201,7 @@ var Component = (function (_yeoman$generators$Base) {
           this.properties.sauceLabsUserName = newProperties.sauceLabsUserName;
           this.properties.codeClimateRepo = newProperties.codeClimateRepo;
           this.properties.codeClimateBadge = newProperties.codeClimateBadge;
+          this.properties.codeClimateRepoToken = newProperties.codeClimateRepoToken;
           this.properties.davidRepo = newProperties.davidRepo;
           done();
         }).bind(this));
@@ -208,27 +229,43 @@ var Component = (function (_yeoman$generators$Base) {
         codeClimate: this.properties.codeClimate,
         codeClimateBadge: this.properties.codeClimateBadge || "",
         codeClimateRepo: this.properties.codeClimateRepo || "",
+        codeClimateRepoToken: this.properties.codeClimateRepoToken || "",
         david: this.properties.david,
         davidRepo: this.properties.davidRepo || ""
       };
 
+      try {
+        var f = _fs2["default"].statSync(this.destinationPath("es6/lib"));
+      } catch (e) {
+        this[copyFilesIf](["es6/lib/_##componentName##.js", "es6/spec/_##componentName##.spec.js"]);
+      }
+
+      this[copyFilesIf](["_README.md", "_package.json"], function (destination) {
+        try {
+          _fs2["default"].statSync(destination);
+          return false;
+        } catch (e) {
+          return true;
+        }
+      });
+
       // copy files
-      this[copyFiles](["_.eslintrc", "_.gitignore", "_.jshintrc", "_.karma.conf.js", "_LICENSE.md", "_README.md", "_package.json", "_gulpfile.babel.js", "_index.js", "_paths.json", "_.editorconfig", "tasks/_build.js", "tasks/_build-lib.js", "tasks/_build-spec.js", "tasks/_test-local.js", "tasks/_test-browsers.js", "tasks/_test.js", "es6/lib/_##componentName##.js", "es6/spec/_##componentName##.spec.js"]);
+      this[copyFilesIf](["_.eslintrc", "_.gitignore", "_.jshintrc", "_.karma.conf.js", "_LICENSE", "_gulpfile.babel.js", "_index.js", "_paths.json", "_.editorconfig", "tasks/_build.js", "tasks/_build-lib.js", "tasks/_build-spec.js", "tasks/_test-local.js", "tasks/_test-browsers.js", "tasks/_test.js"]);
 
       if (this.properties.codeClimate) {
-        this[copyFiles](["_.codeclimate.yml"]);
+        this[copyFilesIf](["_.codeclimate.yml", "tasks/_codeClimate.js"]);
       }
 
       if (this.properties.floobits) {
-        this[copyFiles](["_.floo", "_.flooignore"]);
+        this[copyFilesIf](["_.floo", "_.flooignore"]);
       }
 
       if (this.properties.sauceLabs) {
-        this[copyFiles](["_.sauce.json"]);
+        this[copyFilesIf](["_.sauce.json"]);
       }
 
       if (this.properties.travis) {
-        this[copyFiles](["_.travis.yml"]);
+        this[copyFilesIf](["_.travis.yml"]);
       }
     }
   }, {
@@ -237,7 +274,7 @@ var Component = (function (_yeoman$generators$Base) {
       //generate travis crypted environment vars and append to the travis YAML
       if (this.properties.sauceLabs) {
         var commandString = "node";
-        var result = _child_process2["default"].spawnSync(commandString, ["" + __dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-ar", "" + this.properties.repoSuffix, "SAUCE_USERNAME=" + this.properties.sauceLabsUserName, "SAUCE_ACCESS_TOKEN=" + this.properties.sauceLabsAccessToken], {
+        var result = _child_process2["default"].spawnSync(commandString, ["" + __dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-ar", "" + this.properties.repoSuffix, "SAUCE_USERNAME=" + this.properties.sauceLabsUserName, "SAUCE_ACCESS_TOKEN=" + this.properties.sauceLabsAccessToken, "CODECLIMATE_REPO_TOKEN=" + this.properties.codeClimateRepo], {
           cwd: "" + this.destinationRoot(),
           encoding: "utf8"
         });
@@ -251,17 +288,23 @@ var Component = (function (_yeoman$generators$Base) {
       this[installAndTest]();
     }
   }, {
-    key: copyFiles,
+    key: copyFilesIf,
 
     //PRIVATE METHODS
 
     value: function (files) {
       var _this2 = this;
 
+      var predicate = arguments[1] === undefined ? function () {
+        return true;
+      } : arguments[1];
+
       files.forEach(function (templatePath) {
         var newName = templatePath.replace("_", "");
         newName = newName.replace("##componentName##", _this2.context.name);
-        _this2.fs.copyTpl(_this2.templatePath(templatePath), _this2.destinationPath("" + newName), _this2.context);
+        if (predicate(_this2.destinationPath(newName))) {
+          _this2.fs.copyTpl(_this2.templatePath(templatePath), _this2.destinationPath("" + newName), _this2.context);
+        }
       }, this);
     }
   }, {

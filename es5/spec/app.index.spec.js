@@ -12,6 +12,14 @@ var _os = require("os");
 
 var _os2 = _interopRequireDefault(_os);
 
+var _fs = require("fs");
+
+var _fs2 = _interopRequireDefault(_fs);
+
+var _rimraf = require("rimraf");
+
+var _rimraf2 = _interopRequireDefault(_rimraf);
+
 var _sinon = require("sinon");
 
 var _sinon2 = _interopRequireDefault(_sinon);
@@ -34,7 +42,8 @@ describe("oss-component generator", function () {
       davidAnswer = undefined,
       davidRepoAnswer = undefined,
       codeClimateAnswer = undefined,
-      codeClimateRepoAnswer = undefined;
+      codeClimateRepoAnswer = undefined,
+      codeClimateRepoTokenAnswer = undefined;
   this.timeout(10 * 1000);
 
   before(function () {
@@ -54,29 +63,34 @@ describe("oss-component generator", function () {
     davidRepoAnswer = "david-dm.org/somerepo";
     codeClimateAnswer = true;
     codeClimateRepoAnswer = "someCodeClimateRepo";
+    codeClimateRepoTokenAnswer = "someCodeClimateRepoTokenAnswer";
   });
 
   describe("(with all false)", function () {
 
     before(function (done) {
-      falseRunningContext = _yeomanGenerator.test.run(_path2["default"].join(__dirname, "../../generators/app")).inDir(_path2["default"].join(_os2["default"].tmpdir(), "/temp-test-false")).withOptions({ "skip-install": true }).withPrompts({
-        name: name,
-        description: descriptionAnswer,
-        organizationName: organizationNameAnswer,
-        floobits: false,
-        sauceLabs: false,
-        travis: false,
-        repositoryUrl: repositoryUrlAnswer,
-        issueTrackerUrl: issueTrackerUrlAnswer,
-        homepage: homepageAnswer,
-        david: false,
-        codeClimate: false
-      }).on("end", done);
+      var basePath = _path2["default"].join(_os2["default"].tmpdir(), "/temp-test-false");
+      //create initial files and dires with a certain content
+      (0, _rimraf2["default"])(basePath, function () {
+        falseRunningContext = _yeomanGenerator.test.run(_path2["default"].join(__dirname, "../../generators/app")).inDir(basePath).withOptions({ "skip-install": true }).withPrompts({
+          name: name,
+          description: descriptionAnswer,
+          organizationName: organizationNameAnswer,
+          floobits: false,
+          sauceLabs: false,
+          travis: false,
+          repositoryUrl: repositoryUrlAnswer,
+          issueTrackerUrl: issueTrackerUrlAnswer,
+          homepage: homepageAnswer,
+          david: false,
+          codeClimate: false
+        }).on("end", done);
+      });
     });
 
     describe("(code quality)", function () {
       it("should not create files for code climate support", function () {
-        _yeomanGenerator.assert.noFile([".codeclimate.yml"]);
+        _yeomanGenerator.assert.noFile([".codeclimate.yml", "tasks/codeClimate.js"]);
       });
 
       it("should not add nothing with codeclimate to the readme.md", function () {
@@ -125,24 +139,28 @@ describe("oss-component generator", function () {
 
   describe("(with all true)", function () {
     before(function (done) {
-      runningContext = _yeomanGenerator.test.run(_path2["default"].join(__dirname, "../../generators/app")).inDir(_path2["default"].join(_os2["default"].tmpdir(), "/temp-test")).withOptions({ "skip-install": true }).withPrompts({
-        name: name,
-        description: descriptionAnswer,
-        organizationName: organizationNameAnswer,
-        floobits: floobitsAnswer,
-        sauceLabs: sauceLabsAnswer,
-        travis: travisAnswer,
-        floobitsWorkspace: floobitsWorkspaceAnswer,
-        repositoryUrl: repositoryUrlAnswer,
-        issueTrackerUrl: issueTrackerUrlAnswer,
-        homepage: homepageAnswer,
-        sauceLabsAccessToken: sauceLabsAccessTokenAnswer,
-        sauceLabsUserName: sauceLabsUserNameAnswer,
-        david: davidAnswer,
-        davidRepo: davidRepoAnswer,
-        codeClimate: codeClimateAnswer,
-        codeClimateRepo: codeClimateRepoAnswer
-      }).on("end", done);
+      var basePath = _path2["default"].join(_os2["default"].tmpdir(), "/temp-test");
+      (0, _rimraf2["default"])(basePath, function () {
+        runningContext = _yeomanGenerator.test.run(_path2["default"].join(__dirname, "../../generators/app")).inDir(basePath).withOptions({ "skip-install": true }).withPrompts({
+          name: name,
+          description: descriptionAnswer,
+          organizationName: organizationNameAnswer,
+          floobits: floobitsAnswer,
+          sauceLabs: sauceLabsAnswer,
+          travis: travisAnswer,
+          floobitsWorkspace: floobitsWorkspaceAnswer,
+          repositoryUrl: repositoryUrlAnswer,
+          issueTrackerUrl: issueTrackerUrlAnswer,
+          homepage: homepageAnswer,
+          sauceLabsAccessToken: sauceLabsAccessTokenAnswer,
+          sauceLabsUserName: sauceLabsUserNameAnswer,
+          david: davidAnswer,
+          davidRepo: davidRepoAnswer,
+          codeClimate: codeClimateAnswer,
+          codeClimateRepo: codeClimateRepoAnswer,
+          codeClimateRepoToken: codeClimateRepoTokenAnswer
+        }).on("end", done);
+      });
     });
 
     describe("(template context)", function () {
@@ -190,6 +208,10 @@ describe("oss-component generator", function () {
         it("should set the context for codeClimateRepo workspace correctly", function () {
           runningContext.generator.context.codeClimateRepo.should.equal(codeClimateRepoAnswer);
         });
+
+        it("should set the context for codeClimateRepoToken workspace correctly", function () {
+          runningContext.generator.context.codeClimateRepoToken.should.equal(codeClimateRepoTokenAnswer);
+        });
       });
 
       describe("(david)", function () {
@@ -219,7 +241,7 @@ describe("oss-component generator", function () {
 
     describe("(licensing)", function () {
       it("should create a LICENSE file", function () {
-        _yeomanGenerator.assert.file(["LICENSE.md"]);
+        _yeomanGenerator.assert.file(["LICENSE"]);
       });
     });
 
@@ -237,7 +259,7 @@ describe("oss-component generator", function () {
 
     describe("(code quality)", function () {
       it("should create files for code climate support", function () {
-        _yeomanGenerator.assert.file([".codeclimate.yml"]);
+        _yeomanGenerator.assert.file([".codeclimate.yml", "tasks/codeClimate.js"]);
         //autogenerated `lcov.info`
       });
 
@@ -330,6 +352,51 @@ describe("oss-component generator", function () {
       xit("should create es5 compatible files", function () {
         _yeomanGenerator.assert.file(["es5/lib/" + name + ".js", "es5/spec/" + name + ".spec.js"]);
       });
+    });
+  });
+
+  describe("(updating)", function () {
+    before(function (done) {
+      var basePath = _path2["default"].join(_os2["default"].tmpdir(), "/temp-test-override");
+
+      falseRunningContext = _yeomanGenerator.test.run(_path2["default"].join(__dirname, "../../generators/app")).inDir(basePath, function () {
+        //create README.md
+        //create package.json
+        //run generator
+        _fs2["default"].mkdirSync(_path2["default"].join(basePath, "es6"));
+        //create lib folder
+        _fs2["default"].mkdirSync(_path2["default"].join(basePath, "es6/lib"));
+        //create spec folder
+        _fs2["default"].mkdirSync(_path2["default"].join(basePath, "es6/spec"));
+      }).withOptions({ "skip-install": true }).withPrompts({
+        name: name,
+        description: descriptionAnswer,
+        organizationName: organizationNameAnswer,
+        floobits: false,
+        sauceLabs: false,
+        travis: false,
+        repositoryUrl: repositoryUrlAnswer,
+        issueTrackerUrl: issueTrackerUrlAnswer,
+        homepage: homepageAnswer,
+        david: false,
+        codeClimate: false
+      }).on("end", done);
+    });
+
+    it("should not create anything on the lib folder if it already exists", function () {
+      _yeomanGenerator.assert.noFile("es6/lib/" + name + ".js");
+    });
+
+    it("should not create anything on the spec folder if it already exists", function () {
+      _yeomanGenerator.assert.noFile("es6/spec/" + name + ".spec.js");
+    });
+
+    xit("should not override the README.md if it already exists", function () {
+      _yeomanGenerator.assert.noFile("README.md");
+    });
+
+    xit("should not override the package.json if it already exists", function () {
+      _yeomanGenerator.assert.noFile("package.json");
     });
   });
 });
