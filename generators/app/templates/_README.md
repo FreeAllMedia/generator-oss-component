@@ -13,7 +13,7 @@ const <%= name %> = new <%= componentNamePascalCase %>;
 
 <% if(travis) { %>[![Build Status](https://travis-ci.org/<%= organizationNamePascalCase %>/<%= name %>.png?branch=master)](https://travis-ci.org/<%= organizationNamePascalCase %>/<%= name %>)<% } %> <% if(codeClimate) { %>[![Test Coverage](https://codeclimate.com/repos/<%= codeClimateRepo %>/badges/<%= codeClimateBadge %>/coverage.svg)](https://codeclimate.com/repos/<%= codeClimateRepo %>/coverage) [![Code Climate](https://codeclimate.com/repos/<%= codeClimateRepo %>/badges/<%= codeClimateBadge %>/gpa.svg)](https://codeclimate.com/repos/<%= codeClimateRepo %>/feed)<% } %> <% if(david) { %>[![Dependency Status](<%= davidRepo %>.png?theme=shields.io)](<%= davidRepo %>?theme=shields.io) [![Dev Dependency Status](<%= davidRepo %>/dev-status.svg)](<%= davidRepo %>?theme=shields.io#info=devDependencies)<% } %>
 
-*Every single build and release is automatically tested on the following platforms:*
+*Every build and release is automatically tested on the following platforms:*
 
 ![node 0.12.x](https://img.shields.io/badge/node-0.12.x-brightgreen.svg) ![node 0.11.x](https://img.shields.io/badge/node-0.11.x-brightgreen.svg) ![node 0.10.x](https://img.shields.io/badge/node-0.10.x-brightgreen.svg)
 ![iojs 2.x.x](https://img.shields.io/badge/iojs-2.x.x-brightgreen.svg) ![iojs 1.x.x](https://img.shields.io/badge/iojs-1.x.x-brightgreen.svg)
