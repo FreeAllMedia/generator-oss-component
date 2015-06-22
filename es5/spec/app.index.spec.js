@@ -356,12 +356,19 @@ describe("oss-component generator", function () {
   });
 
   describe("(updating)", function () {
+    var readmeContent = undefined,
+        packageContent = undefined;
+
     before(function (done) {
       var basePath = _path2["default"].join(_os2["default"].tmpdir(), "/temp-test-override");
+      readmeContent = "# some content";
+      packageContent = "{\"name\": \"testcontent\"}";
 
       falseRunningContext = _yeomanGenerator.test.run(_path2["default"].join(__dirname, "../../generators/app")).inDir(basePath, function () {
         //create README.md
+        _fs2["default"].appendFileSync("./README.md", readmeContent);
         //create package.json
+        _fs2["default"].appendFileSync("./package.json", packageContent);
         //run generator
         _fs2["default"].mkdirSync(_path2["default"].join(basePath, "es6"));
         //create lib folder
@@ -391,12 +398,12 @@ describe("oss-component generator", function () {
       _yeomanGenerator.assert.noFile("es6/spec/" + name + ".spec.js");
     });
 
-    xit("should not override the README.md if it already exists", function () {
-      _yeomanGenerator.assert.noFile("README.md");
+    it("should not override the README.md if it already exists", function () {
+      _yeomanGenerator.assert.fileContent("README.md", readmeContent);
     });
 
-    xit("should not override the package.json if it already exists", function () {
-      _yeomanGenerator.assert.noFile("package.json");
+    it("should not override the package.json if it already exists", function () {
+      _yeomanGenerator.assert.fileContent("package.json", packageContent);
     });
   });
 });

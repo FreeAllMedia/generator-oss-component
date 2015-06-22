@@ -358,13 +358,20 @@ describe("oss-component generator", function() {
   });
 
   describe("(updating)", () => {
+    let readmeContent,
+      packageContent;
+
     before(done => {
       const basePath = path.join(os.tmpdir(), "/temp-test-override");
+      readmeContent = "# some content";
+      packageContent = `{"name": "testcontent"}`;
 
       falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
         .inDir(basePath, () => {
           //create README.md
+          fs.appendFileSync("./README.md", readmeContent);
           //create package.json
+          fs.appendFileSync("./package.json", packageContent);
           //run generator
           fs.mkdirSync(path.join(basePath, "es6"));
           //create lib folder
@@ -397,12 +404,12 @@ describe("oss-component generator", function() {
       assert.noFile(`es6/spec/${name}.spec.js`);
     });
 
-    xit("should not override the README.md if it already exists", () => {
-      assert.noFile(`README.md`);
+    it("should not override the README.md if it already exists", () => {
+      assert.fileContent(`README.md`, readmeContent);
     });
 
-    xit("should not override the package.json if it already exists", () => {
-      assert.noFile(`package.json`);
+    it("should not override the package.json if it already exists", () => {
+      assert.fileContent(`package.json`, packageContent);
     });
   });
 });
