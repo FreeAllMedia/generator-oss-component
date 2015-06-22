@@ -265,7 +265,7 @@ var Component = (function (_yeoman$generators$Base) {
     value: function install() {
       //generate travis crypted environment vars and append to the travis YAML
       if (this.properties.sauceLabs) {
-        var result = _child_process2["default"].spawnSync("node", ["" + __dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-ar", "" + this.properties.repoSuffix, "SAUCE_USERNAME=" + this.properties.sauceLabsUserName, "SAUCE_ACCESS_KEY=" + this.properties.sauceLabsAccessToken, "SAUCE_PASSWORD=" + this.properties.sauceLabsPassword, "CODECLIMATE_REPO_TOKEN=" + this.properties.codeClimateRepo], {
+        var result = _child_process2["default"].spawnSync("node", ["" + __dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-ar", "" + this.properties.repoSuffix, "SAUCE_USERNAME=" + this.properties.sauceLabsUserName, "SAUCE_ACCESS_KEY=" + this.properties.sauceLabsAccessToken, "CODECLIMATE_REPO_TOKEN=" + this.properties.codeClimateRepo], {
           cwd: "" + this.destinationRoot(),
           encoding: "utf8"
         });
