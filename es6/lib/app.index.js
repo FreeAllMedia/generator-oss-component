@@ -102,7 +102,7 @@ export default class Component extends yeoman.generators.Base {
           type: "input",
           name: "sauceLabsUserName",
           message: "Please provide the user name for Sauce Labs (if the Travis slug is already linked, we will encrypt it into the travis yaml for you)",
-          default: `${this.properties.organizationNameCamelCase}`,
+          default: `${this.properties.name}`,
           when:
             () => {
               return this.properties.sauceLabs;
@@ -119,17 +119,8 @@ export default class Component extends yeoman.generators.Base {
         }, {
           type: "input",
           name: "codeClimateRepo",
-          message: "Paste here the Code Climate Repo code",
-          default: ``,
-          when:
-            () => {
-              return this.properties.codeClimate;
-            }
-        }, {
-          type: "input",
-          name: "codeClimateBadge",
-          message: "Paste here the Code Climate Badge code",
-          default: ``,
+          message: "Paste here the Code Climate Repo name",
+          default: `${this.properties.name}`,
           when:
             () => {
               return this.properties.codeClimate;
@@ -137,7 +128,7 @@ export default class Component extends yeoman.generators.Base {
         }, {
           type: "input",
           name: "codeClimateRepoToken",
-          message: "Paste here the Code Climate Badge Token for test coverage",
+          message: "Paste here the Code Climate token for test coverage",
           default: ``,
           when:
             () => {
@@ -252,10 +243,9 @@ export default class Component extends yeoman.generators.Base {
 	install() {
     //generate travis crypted environment vars and append to the travis YAML
     if(this.properties.sauceLabs) {
-      const commandString = `node`;
       const result = childProcess.spawnSync(
-        commandString,
-        [`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-ar`, `${this.properties.repoSuffix}`, `SAUCE_USERNAME=${this.properties.sauceLabsUserName}`, `SAUCE_ACCESS_TOKEN=${this.properties.sauceLabsAccessToken}`, `CODECLIMATE_REPO_TOKEN=${this.properties.codeClimateRepo}`],
+        "node",
+        [`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-ar`, `${this.properties.repoSuffix}`, `SAUCE_USERNAME=${this.properties.sauceLabsUserName}`, `SAUCE_ACCESS_KEY=${this.properties.sauceLabsAccessToken}`, `CODECLIMATE_REPO_TOKEN=${this.properties.codeClimateRepo}`],
         {
           cwd: `${this.destinationRoot()}`,
           encoding: "utf8"
