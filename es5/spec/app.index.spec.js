@@ -362,7 +362,7 @@ describe("oss-component generator", function () {
     before(function (done) {
       var basePath = _path2["default"].join(_os2["default"].tmpdir(), "/temp-test-override");
       readmeContent = "# some content";
-      packageContent = "{\"name\": \"testcontent\"}";
+      packageContent = "{\"dependencies\": {\"debug\": \"latest\"}}";
 
       falseRunningContext = _yeomanGenerator.test.run(_path2["default"].join(__dirname, "../../generators/app")).inDir(basePath, function () {
         //create README.md

@@ -364,7 +364,7 @@ describe("oss-component generator", function() {
     before(done => {
       const basePath = path.join(os.tmpdir(), "/temp-test-override");
       readmeContent = "# some content";
-      packageContent = `{"name": "testcontent"}`;
+      packageContent = `{"dependencies": {"debug": "latest"}}`;
 
       falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
         .inDir(basePath, () => {
