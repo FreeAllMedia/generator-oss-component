@@ -16,21 +16,6 @@ gulp.task("test-local", ["build"], (cb) => {
         .pipe(mocha())
         .pipe(istanbul.writeReports({dir: `${__dirname}/../`, reporters: ["text-summary", "lcovonly"]})) // Creating the reports after tests ran
 		//.pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } })) // Enforce a coverage of at least 90%
-        .on("end", () => {
-          <% if (codeClimate) { %>
-            //send report to code climate
-            if (process.env.TRAVIS_BUILD_NUMBER) {
-              if (process.env.TRAVIS_JOB_NUMBER === `${process.env.TRAVIS_BUILD_NUMBER}.1`) {
-                codeClimate("<%= codeClimateRepoToken %>", cb);
-              } else {
-                cb();
-              }
-            } else {
-              codeClimate("<%= codeClimateRepoToken %>", cb);
-            }
-          <% } else { %>
-            cb()
-          <% } %>
-        });
+        .on("end", cb);
     });
 });
