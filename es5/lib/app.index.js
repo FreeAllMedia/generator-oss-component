@@ -245,7 +245,7 @@ var Component = (function (_yeoman$generators$Base) {
       this[copyFilesIf](["_.eslintrc", "_.gitignore", "_.jshintrc", "_.karma.conf.js", "_LICENSE", "_gulpfile.babel.js", "_index.js", "_paths.json", "_.editorconfig", "tasks/_build.js", "tasks/_build-lib.js", "tasks/_build-spec.js", "tasks/_test-local.js", "tasks/_test-browsers.js", "tasks/_test.js"]);
 
       if (this.properties.codeClimate) {
-        this[copyFilesIf](["_.codeclimate.yml", "tasks/_codeClimate.js"]);
+        this[copyFilesIf](["_.codeclimate.yml"]);
       }
 
       if (this.properties.floobits) {

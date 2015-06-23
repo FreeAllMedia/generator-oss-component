@@ -163,28 +163,28 @@ export default class Component extends yeoman.generators.Base {
 	}
 
 	writing() {
-    this.context = {
+	    this.context = {
 			name: this.properties.name,
 			description: this.properties.description,
-      floobits: this.properties.floobits,
+			floobits: this.properties.floobits,
 			floobitsWorkspace: this.properties.floobitsWorkspace,
-      organizationNamePascalCase: this.properties.organizationNamePascalCase,
+			organizationNamePascalCase: this.properties.organizationNamePascalCase,
 			componentNamePascalCase: inflect(this.properties.name).pascal.toString(),
 			organizationName: this.properties.organizationName,
-      organizationType: this.properties.organizationType,
+			organizationType: this.properties.organizationType,
 			homepage: this.properties.homepage,
 			repositoryUrl: this.properties.repositoryUrl,
 			issueTrackerUrl: this.properties.issueTrackerUrl,
-      travis: this.properties.travis,
-      sauceLabs: this.properties.sauceLabs,
-      sauceLabsUserName: this.properties.sauceLabsUserName || "",
-      sauceLabsAccessToken: this.properties.sauceLabsAccessToken || "",
-      codeClimate: this.properties.codeClimate,
-      codeClimateBadge: this.properties.codeClimateBadge || "",
-      codeClimateRepo: this.properties.codeClimateRepo || "",
-      codeClimateRepoToken: this.properties.codeClimateRepoToken || "",
-      david: this.properties.david,
-      davidRepo: this.properties.davidRepo || ""
+			travis: this.properties.travis,
+			sauceLabs: this.properties.sauceLabs,
+			sauceLabsUserName: this.properties.sauceLabsUserName || "",
+			sauceLabsAccessToken: this.properties.sauceLabsAccessToken || "",
+			codeClimate: this.properties.codeClimate,
+			codeClimateBadge: this.properties.codeClimateBadge || "",
+			codeClimateRepo: this.properties.codeClimateRepo || "",
+			codeClimateRepoToken: this.properties.codeClimateRepoToken || "",
+			david: this.properties.david,
+			davidRepo: this.properties.davidRepo || ""
 		};
 
     try {
@@ -214,7 +214,7 @@ export default class Component extends yeoman.generators.Base {
 			"_gulpfile.babel.js",
 			"_index.js",
 			"_paths.json",
-      "_.editorconfig",
+      		"_.editorconfig",
 			"tasks/_build.js",
 			"tasks/_build-lib.js",
 			"tasks/_build-spec.js",
@@ -223,9 +223,9 @@ export default class Component extends yeoman.generators.Base {
 			"tasks/_test.js"]
 		);
 
-    if(this.properties.codeClimate) {
-      this[copyFilesIf](["_.codeclimate.yml", "tasks/_codeClimate.js",]);
-    }
+	    if(this.properties.codeClimate) {
+	      this[copyFilesIf](["_.codeclimate.yml"]);
+	    }
 
 		if(this.properties.floobits) {
 			this[copyFilesIf](["_.floo", "_.flooignore"]);
