@@ -58,13 +58,13 @@ let configOptions = {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true
 };
 
 /**
  * Special Options For SauceLabs
  */
-if (process.env.SAUCE_USERNAME) {
+<% if (sauceLabs) { %>if (process.env.SAUCE_USERNAME) {
     /**
      * If SauceLabs credentials are available,
      * set up the tests to run through them.
@@ -82,7 +82,7 @@ if (process.env.SAUCE_USERNAME) {
      * detect the browsers that we *can* use.
      */
     frameworks.push("detectBrowsers");
-}
+}<% } else { %>frameworks.push("detectBrowsers");<% } %>
 
 module.exports = function(config) {
     // level of logging

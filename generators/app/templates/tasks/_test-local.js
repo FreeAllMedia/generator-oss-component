@@ -1,7 +1,7 @@
 import gulp from "gulp";
 import mocha from "gulp-mocha";
 import istanbul from "gulp-istanbul";
-import codeClimate from "./codeClimate";
+<% if (codeClimate) { %>import codeClimate from "./codeClimate.js";<% } %>
 import paths from "../paths.json";
 
 import chai from "chai";

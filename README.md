@@ -6,6 +6,20 @@
 
 [![Dependency Status](https://david-dm.org/FreeAllMedia/generator-oss-component.png?theme=shields.io)](https://david-dm.org/FreeAllMedia/generator-oss-component?theme=shields.io) [![Dev Dependency Status](https://david-dm.org/FreeAllMedia/generator-oss-component/dev-status.svg)](https://david-dm.org/FreeAllMedia/generator-oss-component?theme=shields.io#info=devDependencies)
 
+# Overview
+
+This yeoman generator will prompt you the following questions:
+
+* What is the component name?
+* What description do you want to give for the component?
+* What is your organization name?
+* What is your organization type?
+* There is a Floobits workspace for this repo (Development Real-time Collaboration)?
+* do you want to add SauceLabs (Cross Browser Testing)?
+* do you want to add Travis (Continuous Integration) support?
+* do you want to add Code Climate (Code Quality) support?
+* do you want to add David (Dependency Management) support?
+
 # Usage
 
 ## Install via `npm`

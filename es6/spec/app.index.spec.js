@@ -6,410 +6,469 @@ import rimraf from "rimraf";
 import sinon from "sinon";
 
 describe("oss-component generator", function() {
-  let name,
-    runningContext,
-    falseRunningContext,
-    floobitsAnswer,
-    descriptionAnswer,
-    organizationNameAnswer,
-    sauceLabsAnswer,
-    travisAnswer,
-    floobitsWorkspaceAnswer,
-    repositoryUrlAnswer,
-    issueTrackerUrlAnswer,
-    homepageAnswer,
-    sauceLabsAccessTokenAnswer,
-    sauceLabsUserNameAnswer,
-    davidAnswer,
-    davidRepoAnswer,
-    codeClimateAnswer,
-    codeClimateRepoAnswer,
-    codeClimateRepoTokenAnswer;
-  this.timeout(10 * 1000);
+	let name,
+		runningContext,
+		falseRunningContext,
+		floobitsAnswer,
+		descriptionAnswer,
+		organizationNameAnswer,
+		sauceLabsAnswer,
+		travisAnswer,
+		floobitsWorkspaceAnswer,
+		repositoryUrlAnswer,
+		issueTrackerUrlAnswer,
+		homepageAnswer,
+		sauceLabsAccessTokenAnswer,
+		sauceLabsUserNameAnswer,
+		davidAnswer,
+		davidRepoAnswer,
+		codeClimateAnswer,
+		codeClimateRepoAnswer,
+		codeClimateRepoTokenAnswer,
 
-  before(() => {
-    name = "jargon";
-    floobitsAnswer = true;
-    descriptionAnswer = "some description for the component";
-    organizationNameAnswer = "Free all media";
-    sauceLabsAnswer = true;
-    travisAnswer = true;
-    floobitsWorkspaceAnswer = "floobits.com/someFlooobitsWorkspaceAnswer";
-    repositoryUrlAnswer = "someRepoUrlAnswer";
-    issueTrackerUrlAnswer = "someIssueTrackerUrl";
-    homepageAnswer = "someHomepageanswer";
-    sauceLabsAccessTokenAnswer = "somesaucelabsaccesstokenanswer";
-    sauceLabsUserNameAnswer = "somesaucelabsusernameanswer";
-    davidAnswer = true;
-    davidRepoAnswer = "david-dm.org/somerepo";
-    codeClimateAnswer = true;
-    codeClimateRepoAnswer = "someCodeClimateRepo";
-    codeClimateRepoTokenAnswer = "someCodeClimateRepoTokenAnswer";
-  });
+		gitHubOrganizationNameAnswer,
+		gitHubClientIdAnswer,
+		gitHubClientSecretAnswer;
 
-  describe("(with all false)", () => {
+	this.timeout(10 * 1000);
 
-    before(done => {
-      const basePath = path.join(os.tmpdir(), "/temp-test-false");
-      //create initial files and dires with a certain content
-      rimraf(basePath, () => {
-          falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
-            .inDir(basePath)
-            .withOptions({ "skip-install": true })
-            .withPrompts({
-              name: name,
-              description: descriptionAnswer,
-              organizationName: organizationNameAnswer,
-              floobits: false,
-              sauceLabs: false,
-              travis: false,
-              repositoryUrl: repositoryUrlAnswer,
-              issueTrackerUrl: issueTrackerUrlAnswer,
-              homepage: homepageAnswer,
-              david: false,
-              codeClimate: false
-            })
-            .on("end", done);
-        });
-    });
+	before(() => {
+		name = "jargon";
+		floobitsAnswer = true;
+		descriptionAnswer = "some description for the component";
+		organizationNameAnswer = "Free all media";
+		sauceLabsAnswer = true;
+		travisAnswer = true;
+		floobitsWorkspaceAnswer = "floobits.com/someFlooobitsWorkspaceAnswer";
+		repositoryUrlAnswer = "someRepoUrlAnswer";
+		issueTrackerUrlAnswer = "someIssueTrackerUrl";
+		homepageAnswer = "someHomepageanswer";
+		sauceLabsAccessTokenAnswer = "somesaucelabsaccesstokenanswer";
+		sauceLabsUserNameAnswer = "somesaucelabsusernameanswer";
+		davidAnswer = true;
+		davidRepoAnswer = "david-dm.org/somerepo";
+		codeClimateAnswer = true;
+		codeClimateRepoAnswer = "someCodeClimateRepo";
+		codeClimateRepoTokenAnswer = "someCodeClimateRepoTokenAnswer";
 
-    describe("(code quality)", () => {
-      it("should not create files for code climate support", () => {
-        assert.noFile([`.codeclimate.yml`, `tasks/codeClimate.js`]);
-      });
+		gitHubOrganizationNameAnswer = "FreeAllMedia";
+		gitHubClientIdAnswer = "d7cff9b81cf09028a4d2";
+		gitHubClientSecretAnswer = "8768b8222a4ffec0bbec81d63add9399320a7c5e";
+	});
 
-      it("should not add nothing with codeclimate to the readme.md", () => {
-        assert.noFileContent("README.md", /codeclimate\.com/);
-      });
-    });
+	describe("(with all false)", () => {
 
-    describe("(dependency management)", () => {
-      it("should not add nothing with david dm to the readme.md", () => {
-        assert.noFileContent("README.md", /david-dm\.org/);
-      });
-    });
+		before(done => {
+			const basePath = path.join(os.tmpdir(), "/temp-test-false");
+			//create initial files and dires with a certain content
+			rimraf(basePath, () => {
+				falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
+					.inDir(basePath)
+					.withOptions({ "skip-install": true })
+					.withPrompts({
+						name: name,
+						description: descriptionAnswer,
+						organizationName: organizationNameAnswer,
+						floobits: false,
+						sauceLabs: false,
+						travis: false,
+						repositoryUrl: repositoryUrlAnswer,
+						issueTrackerUrl: issueTrackerUrlAnswer,
+						homepage: homepageAnswer,
+						david: false,
+						codeClimate: false,
 
-    describe("(collaboration support)", () => {
-      describe("(coding)", () => {
-        it("should not create files for floobits support", () => {
-          assert.noFile([`.floo`, `.flooignore`]);
-        });
+						gitHubOrganizationName: gitHubOrganizationNameAnswer,
+						gitHubAutomate: false
+					})
+					.on("end", done);
+			});
+		});
 
-        it("should not add nothing with codeclimate to the readme.md", () => {
-          assert.noFileContent("README.md", /floobits\.com/);
-        });
-      });
-    });
+		describe("(general information)", () => {
+			it("should set name property correctly", () => {
+				falseRunningContext.generator.context.name.should.equal(name);
+			});
 
-    describe("(testing)", () => {
-      it("should not create files for sauce labs", () => {
-        assert.noFile([`.sauce.json`]);
-      });
+			it("should set description property correctly", () => {
+				falseRunningContext.generator.context.description.should.equal(descriptionAnswer);
+			});
 
-      it("should not add nothing with codeclimate to the readme.md", () => {
-        assert.noFileContent("README.md", /saucelabs\.com/);
-      });
-    });
+			it("should set organizationName property correctly", () => {
+				falseRunningContext.generator.context.organizationName.should.equal(organizationNameAnswer);
+			});
 
-    describe("(continuous integration)", () => {
-      it("should not create files for Travis CI", () => {
-        assert.noFile([`.travis.yml`]);
-      });
+			it("should set gitHubOrganizationName property correctly", () => {
+				falseRunningContext.generator.context.gitHubOrganizationName.should.equal(gitHubOrganizationNameAnswer);
+			});
 
-      it("should not add nothing with codeclimate to the readme.md", () => {
-        assert.noFileContent("README.md", /travis-ci\.org/);
-      });
-    });
-  });
+			it("should set repositoryUrl property correctly", () => {
+				falseRunningContext.generator.context.repositoryUrl.should.equal(repositoryUrlAnswer);
+			});
 
-  describe("(with all true)", () => {
-    before(done => {
-      const basePath = path.join(os.tmpdir(), "/temp-test");
-      rimraf(basePath, () => {
-        runningContext = helpers.run(path.join(__dirname, "../../generators/app"))
-          .inDir(basePath)
-          .withOptions({ "skip-install": true })
-          .withPrompts({
-            name: name,
-            description: descriptionAnswer,
-            organizationName: organizationNameAnswer,
-            floobits: floobitsAnswer,
-            sauceLabs: sauceLabsAnswer,
-            travis: travisAnswer,
-            floobitsWorkspace: floobitsWorkspaceAnswer,
-            repositoryUrl: repositoryUrlAnswer,
-            issueTrackerUrl: issueTrackerUrlAnswer,
-            homepage: homepageAnswer,
-            sauceLabsAccessToken: sauceLabsAccessTokenAnswer,
-            sauceLabsUserName: sauceLabsUserNameAnswer,
-            david: davidAnswer,
-            davidRepo: davidRepoAnswer,
-            codeClimate: codeClimateAnswer,
-            codeClimateRepo: codeClimateRepoAnswer,
-            codeClimateRepoToken: codeClimateRepoTokenAnswer
-          })
-          .on("end", done);
-      })
+			it("should set issueTrackerUrl property correctly", () => {
+				falseRunningContext.generator.context.issueTrackerUrl.should.equal(issueTrackerUrlAnswer);
+			});
 
-    });
+			it("should set homepage property correctly", () => {
+				falseRunningContext.generator.context.homepage.should.equal(homepageAnswer);
+			});
+		});
 
-    describe("(template context)", () => {
-      describe("(general information)", () => {
-        it("should set the context name property correctly", () => {
-          runningContext.generator.context.name.should.equal(name);
-        });
+		describe("(code quality)", () => {
+			it("should not create files for code climate support", () => {
+				assert.noFile([`.codeclimate.yml`, `tasks/codeClimate.js`]);
+			});
 
-        it("should set the context description property correctly", () => {
-          runningContext.generator.context.description.should.equal(descriptionAnswer);
-        });
+			it("should not add nothing with codeclimate to the readme.md", () => {
+				assert.noFileContent("README.md", /codeclimate\.com/);
+			});
+		});
 
-        it("should set the context organizationName property correctly", () => {
-          runningContext.generator.context.organizationName.should.equal(organizationNameAnswer);
-        });
+		describe("(dependency management)", () => {
+			it("should not add nothing with david dm to the readme.md", () => {
+				assert.noFileContent("README.md", /david-dm\.org/);
+			});
+		});
 
-        it("should set the context repositoryUrl property correctly", () => {
-          runningContext.generator.context.repositoryUrl.should.equal(repositoryUrlAnswer);
-        });
+		describe("(collaboration support)", () => {
+			describe("(coding)", () => {
+				it("should not create files for floobits support", () => {
+					assert.noFile([`.floo`, `.flooignore`]);
+				});
 
-        it("should set the context issueTrackerUrl property correctly", () => {
-          runningContext.generator.context.issueTrackerUrl.should.equal(issueTrackerUrlAnswer);
-        });
+				it("should not add nothing with codeclimate to the readme.md", () => {
+					assert.noFileContent("README.md", /floobits\.com/);
+				});
+			});
+		});
 
-        it("should set the context homepage property correctly", () => {
-          runningContext.generator.context.homepage.should.equal(homepageAnswer);
-        });
-      });
+		describe("(testing)", () => {
+			it("should not create files for sauce labs", () => {
+				assert.noFile([`.sauce.json`]);
+			});
 
-      describe("(floobits)", () => {
-        it("should set the context for floobits correctly", () => {
-          runningContext.generator.context.floobits.should.equal(floobitsAnswer);
-        });
+			it("should not add nothing with codeclimate to the readme.md", () => {
+				assert.noFileContent("README.md", /saucelabs\.com/);
+			});
+		});
 
-        it("should set the context for floobits workspace correctly", () => {
-          runningContext.generator.context.floobitsWorkspace.should.equal(floobitsWorkspaceAnswer);
-        });
-      });
+		describe("(continuous integration)", () => {
+			it("should not create files for Travis CI", () => {
+				assert.noFile([`.travis.yml`]);
+			});
 
-      describe("(codeclimate)", () => {
-        it("should set the context for codeClimate correctly", () => {
-          runningContext.generator.context.codeClimate.should.equal(codeClimateAnswer);
-        });
+			it("should not add nothing with codeclimate to the readme.md", () => {
+				assert.noFileContent("README.md", /travis-ci\.org/);
+			});
+		});
+	});
 
-        it("should set the context for codeClimateRepo workspace correctly", () => {
-          runningContext.generator.context.codeClimateRepo.should.equal(codeClimateRepoAnswer);
-        });
+	describe("(with all true)", () => {
+		before(done => {
+			const basePath = path.join(os.tmpdir(), "/temp-test");
+			rimraf(basePath, () => {
+				runningContext = helpers.run(path.join(__dirname, "../../generators/app"))
+					.inDir(basePath)
+					.withOptions({ "skip-install": true })
+					.withPrompts({
+						name: name,
+						description: descriptionAnswer,
+						organizationName: organizationNameAnswer,
+						floobits: floobitsAnswer,
+						sauceLabs: sauceLabsAnswer,
+						travis: travisAnswer,
+						floobitsWorkspace: floobitsWorkspaceAnswer,
+						repositoryUrl: repositoryUrlAnswer,
+						issueTrackerUrl: issueTrackerUrlAnswer,
+						homepage: homepageAnswer,
+						sauceLabsAccessToken: sauceLabsAccessTokenAnswer,
+						sauceLabsUserName: sauceLabsUserNameAnswer,
+						david: davidAnswer,
+						davidRepo: davidRepoAnswer,
+						codeClimate: codeClimateAnswer,
+						codeClimateRepo: codeClimateRepoAnswer,
+						codeClimateRepoToken: codeClimateRepoTokenAnswer,
 
-        it("should set the context for codeClimateRepoToken workspace correctly", () => {
-          runningContext.generator.context.codeClimateRepoToken.should.equal(codeClimateRepoTokenAnswer);
-        });
-      });
+						gitHubOrganizationName: gitHubOrganizationNameAnswer,
+						gitHubAutomate: true,
 
-      describe("(david)", () => {
-        it("should set the context for david correctly", () => {
-          runningContext.generator.context.david.should.equal(davidAnswer);
-        });
+						gitHubClientId: gitHubClientIdAnswer,
+						gitHubClientSecret: gitHubClientSecretAnswer
+					})
+					.on("end", done);
+			});
+		});
 
-        it("should set the context for davidRepo workspace correctly", () => {
-          runningContext.generator.context.davidRepo.should.equal(davidRepoAnswer);
-        });
-      });
+		describe("(template context)", () => {
+			describe("(general information)", () => {
+				it("should set name property correctly", () => {
+					runningContext.generator.context.name.should.equal(name);
+				});
 
-      describe("(sauceLabs)", () => {
-        it("should set the context for sauceLabs correctly", () => {
-          runningContext.generator.context.sauceLabs.should.equal(sauceLabsAnswer);
-        });
+				it("should set description property correctly", () => {
+					runningContext.generator.context.description.should.equal(descriptionAnswer);
+				});
 
-        it("should set the context for sauceLabsUserName workspace correctly", () => {
-          runningContext.generator.context.sauceLabsUserName.should.equal(sauceLabsUserNameAnswer);
-        });
+				it("should set organizationName property correctly", () => {
+					runningContext.generator.context.organizationName.should.equal(organizationNameAnswer);
+				});
 
-        it("should set the context for sauceLabsAccessToken workspace correctly", () => {
-          runningContext.generator.context.sauceLabsAccessToken.should.equal(sauceLabsAccessTokenAnswer);
-        });
-      });
-    });
+				it("should set gitHubOrganizationName property correctly", () => {
+					runningContext.generator.context.gitHubOrganizationName.should.equal(gitHubOrganizationNameAnswer);
+				});
 
-    describe("(licensing)", () => {
-      it("should create a LICENSE file", () => {
-        assert.file([`LICENSE`]);
-      });
-    });
+				it("should set gitHubClientId property correctly", () => {
+					runningContext.generator.context.gitHubClientId.should.equal(gitHubClientIdAnswer);
+				});
 
-    describe("(documentation)", () => {
-      it("should create a README file", () => {
-        assert.file([`README.md`]);
-      });
-    });
+				it("should set gitHubClientSecret property correctly", () => {
+					runningContext.generator.context.gitHubClientSecret.should.equal(gitHubClientSecretAnswer);
+				});
 
-    describe("(package-description)", () => {
-      it("should create a package.json file", () => {
-        assert.file([`package.json`]);
-      });
-    });
+				it("should set repositoryUrl property correctly", () => {
+					runningContext.generator.context.repositoryUrl.should.equal(repositoryUrlAnswer);
+				});
 
-    describe("(code quality)", () => {
-      it("should create files for code climate support", () => {
-        assert.file([`.codeclimate.yml`, `tasks/codeClimate.js`]);
-        //autogenerated `lcov.info`
-      });
+				it("should set issueTrackerUrl property correctly", () => {
+					runningContext.generator.context.issueTrackerUrl.should.equal(issueTrackerUrlAnswer);
+				});
 
-      it("should add code climate to the readme.md", () => {
-        assert.fileContent("README.md", /codeclimate\.com/);
-      });
+				it("should set homepage property correctly", () => {
+					runningContext.generator.context.homepage.should.equal(homepageAnswer);
+				});
+			});
 
-      describe("(linting)", () => {
-        it("should generate an eslint file", () => {
-          assert.file([`.eslintrc`]);
-        });
+			describe("(floobits)", () => {
+				it("should set floobits correctly", () => {
+					runningContext.generator.context.floobits.should.equal(floobitsAnswer);
+				});
 
-        it("should generate an jshint file", () => {
-          assert.file([`.jshintrc`]);
-        });
-      });
+				it("should set floobits workspace correctly", () => {
+					runningContext.generator.context.floobitsWorkspace.should.equal(floobitsWorkspaceAnswer);
+				});
+			});
 
-      describe("(editorconfig)", () => {
-        it("should generate a file for the IDE", () => {
-          assert.file(".editorconfig");
-        });
-      });
-    });
+			describe("(codeclimate)", () => {
+				it("should set codeClimate correctly", () => {
+					runningContext.generator.context.codeClimate.should.equal(codeClimateAnswer);
+				});
 
-    describe("(dependency management)", () => {
-      it("should add david dm to the readme.md", () => {
-        assert.fileContent("README.md", /david-dm\.org/);
-      });
-    });
+				it("should set codeClimateRepo workspace correctly", () => {
+					runningContext.generator.context.codeClimateRepo.should.equal(codeClimateRepoAnswer);
+				});
 
-    describe("(collaboration support)", () => {
-      describe("(coding)", () => {
-        it("should create files for floobits support", () => {
-          assert.file([`.floo`, `.flooignore`]);
-        });
+				it("should set codeClimateRepoToken workspace correctly", () => {
+					runningContext.generator.context.codeClimateRepoToken.should.equal(codeClimateRepoTokenAnswer);
+				});
+			});
 
-        it("should add floobits to the readme.md", () => {
-          assert.fileContent("README.md", /floobits\.com/);
-        });
-      });
+			describe("(david)", () => {
+				it("should set david correctly", () => {
+					runningContext.generator.context.david.should.equal(davidAnswer);
+				});
 
-      describe("(source code management)", () => {
-        it("should create utiliy git files", () => {
-          assert.file([`.gitignore`]);
-        });
-      });
-    });
+				it("should set davidRepo workspace correctly", () => {
+					runningContext.generator.context.davidRepo.should.equal(davidRepoAnswer);
+				});
+			});
 
-    describe("(testing)", () => {
-      it("should create files for karma", () => {
-        assert.file([`.karma.conf.js`]);
-      });
+			describe("(sauceLabs)", () => {
+				it("should set sauceLabs correctly", () => {
+					runningContext.generator.context.sauceLabs.should.equal(sauceLabsAnswer);
+				});
 
-      it("should create files for sauce labs", () => {
-        assert.file([`.sauce.json`]);
-      });
+				it("should set sauceLabsUserName workspace correctly", () => {
+					runningContext.generator.context.sauceLabsUserName.should.equal(sauceLabsUserNameAnswer);
+				});
 
-      it("should add sauce labs to the readme.md", () => {
-        assert.fileContent("README.md", /saucelabs\.com/);
-      });
-    });
+				it("should set sauceLabsAccessToken workspace correctly", () => {
+					runningContext.generator.context.sauceLabsAccessToken.should.equal(sauceLabsAccessTokenAnswer);
+				});
+			});
+		});
 
-    describe("(continuous integration)", () => {
-      it("should create files for Travis CI", () => {
-        assert.file([`.travis.yml`]);
-      });
+		describe("(licensing)", () => {
+			it("should create a LICENSE file", () => {
+				assert.file([`LICENSE`]);
+			});
+		});
 
-      it("should add travis to the readme.md", () => {
-        assert.fileContent("README.md", /travis-ci\.org/);
-      });
-    });
+		describe("(documentation)", () => {
+			it("should create a README file", () => {
+				assert.file([`README.md`]);
+			});
+		});
 
-    describe("(automation)", () => {
-      it("should create gulp related files", () => {
-        assert.file([`gulpfile.babel.js`,
-          `tasks/build.js`,
-          `tasks/build-lib.js`,
-          `tasks/build-spec.js`,
-          `tasks/test.js`,
-          `tasks/test-local.js`,
-          `tasks/test-browsers.js`,
-          `paths.json`
-        ]);
-      });
-    });
+		describe("(package-description)", () => {
+			it("should create a package.json file", () => {
+				assert.file([`package.json`]);
+			});
+		});
 
-    describe("(functionality)", () => {
-      it("should generate an index", () => {
-        assert.file([`index.js`]);
-      });
+		describe("(code quality)", () => {
+			it("should create files for code climate support", () => {
+				assert.file([`.codeclimate.yml`, `tasks/codeClimate.js`]);
+				//autogenerated `lcov.info`
+			});
 
-      it("should generate a mock entry point with his test", () => {
-        assert.file([`es6/lib/${name}.js`,
-          `es6/spec/${name}.spec.js`
-        ]);
-      });
+			it("should add code climate to the readme.md", () => {
+				assert.fileContent("README.md", /codeclimate\.com/);
+			});
 
-      //suspended due to the time that takes to install dependencies
-      //tested also with the actual yo command
-      xit("should create es5 compatible files", () => {
-        assert.file([`es5/lib/${name}.js`,
-          `es5/spec/${name}.spec.js`
-        ]);
-      });
-    });
-  });
+			describe("(linting)", () => {
+				it("should generate an eslint file", () => {
+					assert.file([`.eslintrc`]);
+				});
 
-  describe("(updating)", () => {
-    let readmeContent,
-      packageContent;
+				it("should generate an jshint file", () => {
+					assert.file([`.jshintrc`]);
+				});
+			});
 
-    before(done => {
-      const basePath = path.join(os.tmpdir(), "/temp-test-override");
-      readmeContent = "# some content";
-      packageContent = `{"dependencies": {"debug": "latest"}}`;
+			describe("(editorconfig)", () => {
+				it("should generate a file for the IDE", () => {
+					assert.file(".editorconfig");
+				});
+			});
+		});
 
-      falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
-        .inDir(basePath, () => {
-          //create README.md
-          fs.appendFileSync("./README.md", readmeContent);
-          //create package.json
-          fs.appendFileSync("./package.json", packageContent);
-          //run generator
-          fs.mkdirSync(path.join(basePath, "es6"));
-          //create lib folder
-          fs.mkdirSync(path.join(basePath, "es6/lib"));
-          //create spec folder
-          fs.mkdirSync(path.join(basePath, "es6/spec"));
-        })
-        .withOptions({ "skip-install": true })
-        .withPrompts({
-          name: name,
-          description: descriptionAnswer,
-          organizationName: organizationNameAnswer,
-          floobits: false,
-          sauceLabs: false,
-          travis: false,
-          repositoryUrl: repositoryUrlAnswer,
-          issueTrackerUrl: issueTrackerUrlAnswer,
-          homepage: homepageAnswer,
-          david: false,
-          codeClimate: false
-        })
-        .on("end", done);
-    });
+		describe("(dependency management)", () => {
+			it("should add david dm to the readme.md", () => {
+				assert.fileContent("README.md", /david-dm\.org/);
+			});
+		});
 
-    it("should not create anything on the lib folder if it already exists", () => {
-      assert.noFile(`es6/lib/${name}.js`);
-    });
+		describe("(collaboration support)", () => {
+			describe("(coding)", () => {
+				it("should create files for floobits support", () => {
+					assert.file([`.floo`, `.flooignore`]);
+				});
 
-    it("should not create anything on the spec folder if it already exists", () => {
-      assert.noFile(`es6/spec/${name}.spec.js`);
-    });
+				it("should add floobits to the readme.md", () => {
+					assert.fileContent("README.md", /floobits\.com/);
+				});
+			});
 
-    it("should not override the README.md if it already exists", () => {
-      assert.fileContent(`README.md`, readmeContent);
-    });
+			describe("(source code management)", () => {
+				it("should create utiliy git files", () => {
+					assert.file([`.gitignore`]);
+				});
+			});
+		});
 
-    it("should not override the package.json if it already exists", () => {
-      assert.fileContent(`package.json`, packageContent);
-    });
-  });
+		describe("(testing)", () => {
+			it("should create files for karma", () => {
+				assert.file([`.karma.conf.js`]);
+			});
+
+			it("should create files for sauce labs", () => {
+				assert.file([`.sauce.json`]);
+			});
+
+			it("should add sauce labs to the readme.md", () => {
+				assert.fileContent("README.md", /saucelabs\.com/);
+			});
+		});
+
+		describe("(continuous integration)", () => {
+			it("should create files for Travis CI", () => {
+				assert.file([`.travis.yml`]);
+			});
+
+			it("should add travis to the readme.md", () => {
+				assert.fileContent("README.md", /travis-ci\.org/);
+			});
+		});
+
+		describe("(automation)", () => {
+			it("should create gulp related files", () => {
+				assert.file([`gulpfile.babel.js`,
+					`tasks/build.js`,
+					`tasks/build-lib.js`,
+					`tasks/build-spec.js`,
+					`tasks/test.js`,
+					`tasks/test-local.js`,
+					`tasks/test-browsers.js`,
+					`paths.json`
+				]);
+			});
+		});
+
+		describe("(functionality)", () => {
+			it("should generate an index", () => {
+				assert.file([`index.js`]);
+			});
+
+			it("should generate a mock entry point with his test", () => {
+				assert.file([`es6/lib/${name}.js`,
+					`es6/spec/${name}.spec.js`
+				]);
+			});
+
+			//suspended due to the time that takes to install dependencies
+			//tested also with the actual yo command
+			xit("should create es5 compatible files", () => {
+				assert.file([`es5/lib/${name}.js`,
+					`es5/spec/${name}.spec.js`
+				]);
+			});
+		});
+	});
+
+	describe("(updating)", () => {
+		let readmeContent,
+			packageContent;
+
+		before(done => {
+			const basePath = path.join(os.tmpdir(), "/temp-test-override");
+			readmeContent = "# some content";
+			packageContent = `{"dependencies": {"debug": "latest"}}`;
+
+			falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
+				.inDir(basePath, () => {
+					//create README.md
+					fs.appendFileSync("./README.md", readmeContent);
+					//create package.json
+					fs.appendFileSync("./package.json", packageContent);
+					//run generator
+					fs.mkdirSync(path.join(basePath, "es6"));
+					//create lib folder
+					fs.mkdirSync(path.join(basePath, "es6/lib"));
+					//create spec folder
+					fs.mkdirSync(path.join(basePath, "es6/spec"));
+				})
+				.withOptions({ "skip-install": true })
+				.withPrompts({
+					name: name,
+					description: descriptionAnswer,
+					organizationName: organizationNameAnswer,
+					floobits: false,
+					sauceLabs: false,
+					travis: false,
+					repositoryUrl: repositoryUrlAnswer,
+					issueTrackerUrl: issueTrackerUrlAnswer,
+					homepage: homepageAnswer,
+					david: false,
+					codeClimate: false
+				})
+				.on("end", done);
+		});
+
+		it("should not create anything on the lib folder if it already exists", () => {
+			assert.noFile(`es6/lib/${name}.js`);
+		});
+
+		it("should not create anything on the spec folder if it already exists", () => {
+			assert.noFile(`es6/spec/${name}.spec.js`);
+		});
+
+		it("should not override the README.md if it already exists", () => {
+			assert.fileContent(`README.md`, readmeContent);
+		});
+
+		it("should not override the package.json if it already exists", () => {
+			assert.fileContent(`package.json`, packageContent);
+		});
+	});
 });
