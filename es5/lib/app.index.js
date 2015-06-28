@@ -32,10 +32,6 @@ var _fs = require("fs");
 
 var _fs2 = _interopRequireDefault(_fs);
 
-var _chalk = require("chalk");
-
-var _chalk2 = _interopRequireDefault(_chalk);
-
 var _flowsync = require("flowsync");
 
 var _flowsync2 = _interopRequireDefault(_flowsync);
@@ -268,10 +264,6 @@ var Component = (function (_yeoman$generators$Base) {
 			// copy files
 			this[copyFilesIf](["_.eslintrc", "_.gitignore", "_.jshintrc", "_.karma.conf.js", "_LICENSE", "_gulpfile.babel.js", "_index.js", "_paths.json", "_.editorconfig", "tasks/_build.js", "tasks/_build-lib.js", "tasks/_build-spec.js", "tasks/_test-local.js", "tasks/_test-browsers.js", "tasks/_test.js"]);
 
-			if (this.answers.codeClimate) {
-				this[copyFilesIf](["_.codeclimate.yml", "tasks/_codeClimate.js"]);
-			}
-
 			if (this.answers.floobits) {
 				this[copyFilesIf](["_.floo", "_.flooignore"]);
 			}
@@ -290,7 +282,7 @@ var Component = (function (_yeoman$generators$Base) {
 
 			//generate travis crypted environment vars and append to the travis YAML
 			if (this.answers.sauceLabs) {
-				var result = _child_process2["default"].spawnSync("node", ["" + __dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-ar", "" + this.answers.gitHubAccountName + "/" + this.answers.name, "SAUCE_USERNAME=" + this.answers.sauceLabsUserName, "SAUCE_ACCESS_KEY=" + this.answers.sauceLabsAccessToken, "CODECLIMATE_REPO_TOKEN=" + this.answers.codeClimateRepo], {
+				var result = _child_process2["default"].spawnSync("node", ["" + __dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-ar", "" + this.answers.gitHubAccountName + "/" + this.answers.name, "SAUCE_USERNAME=" + this.answers.sauceLabsUserName, "SAUCE_ACCESS_KEY=" + this.answers.sauceLabsAccessToken], {
 					cwd: "" + this.destinationRoot(),
 					encoding: "utf8"
 				});
