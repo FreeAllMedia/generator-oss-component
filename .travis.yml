@@ -1,4 +1,3 @@
-sudo: false
 language: node_js
 node_js:
   - 'iojs-v1'
@@ -6,3 +5,8 @@ node_js:
   - '0.12'
   - '0.11'
   # - '0.10' Fails. See: https://www.pivotaltracker.com/story/show/97247190
+script: npm test
+before_script:
+  - npm install
+after_success:
+  - ./node_modules/coveralls/bin/coveralls.js < ./lcov.info
