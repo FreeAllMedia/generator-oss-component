@@ -3,115 +3,111 @@ import {assert, test as helpers} from "yeoman-generator";
 import os from "os";
 import fs from "fs";
 import rimraf from "rimraf";
-import sinon from "sinon";
+import nock from "nock";
+
+nock.disableNetConnect();
+//nock.recorder.rec();
+
+const basePath = path.join(os.tmpdir(), "/temp-test");
 
 describe("oss-component generator", function() {
-	let name,
-		runningContext,
-		falseRunningContext,
-		floobitsAnswer,
-		descriptionAnswer,
-		organizationNameAnswer,
-		sauceLabsAnswer,
-		travisAnswer,
-		floobitsWorkspaceAnswer,
-		repositoryUrlAnswer,
-		issueTrackerUrlAnswer,
-		homepageAnswer,
-		sauceLabsAccessTokenAnswer,
-		sauceLabsUserNameAnswer,
-		davidAnswer,
-		davidRepoAnswer,
-		codeClimateAnswer,
-		codeClimateRepoAnswer,
-		codeClimateRepoTokenAnswer,
+	let context,
+		answers,
+		nockScope;
 
-		gitHubOrganizationNameAnswer,
-		gitHubClientIdAnswer,
-		gitHubClientSecretAnswer;
-
-	this.timeout(10 * 1000);
+	this.timeout(10000); // Yeoman generation can sometimes take longer than 2 seconds. Let's give it 10.
 
 	before(() => {
-		name = "jargon";
-		floobitsAnswer = true;
-		descriptionAnswer = "some description for the component";
-		organizationNameAnswer = "Free all media";
-		sauceLabsAnswer = true;
-		travisAnswer = true;
-		floobitsWorkspaceAnswer = "floobits.com/someFlooobitsWorkspaceAnswer";
-		repositoryUrlAnswer = "someRepoUrlAnswer";
-		issueTrackerUrlAnswer = "someIssueTrackerUrl";
-		homepageAnswer = "someHomepageanswer";
-		sauceLabsAccessTokenAnswer = "somesaucelabsaccesstokenanswer";
-		sauceLabsUserNameAnswer = "somesaucelabsusernameanswer";
-		davidAnswer = true;
-		davidRepoAnswer = "david-dm.org/somerepo";
-		codeClimateAnswer = true;
-		codeClimateRepoAnswer = "someCodeClimateRepo";
-		codeClimateRepoTokenAnswer = "someCodeClimateRepoTokenAnswer";
+		nockScope = nock("https://api.github.com:443");
 
-		gitHubOrganizationNameAnswer = "FreeAllMedia";
-		gitHubClientIdAnswer = "d7cff9b81cf09028a4d2";
-		gitHubClientSecretAnswer = "8768b8222a4ffec0bbec81d63add9399320a7c5e";
+
+		answers = {
+			"true": {
+				"name": "jargon",
+				"description": "some description for the component",
+				"organizationName": "Free all media",
+
+				"repositoryUrl": "someRepoUrl",
+				"issueTrackerUrl": "someIssueTrackerUrl",
+				"homepage": "someHomepageanswer",
+
+				"travis": true,
+
+				"floobits": true,
+				"floobitsWorkspace": "floobits.com/someFlooobitsWorkspace",
+
+				"sauceLabs": true,
+				"sauceLabsAccessToken": "somesaucelabsaccesstokenanswer",
+				"sauceLabsUserName": "somesaucelabsusernameanswer",
+
+				"david": true,
+				"davidRepo": "david-dm.org/somerepo",
+
+				"codeClimate": true,
+
+				"gitHub": true,
+				"gitHubAccountName": "FreeAllMedia"
+			},
+			"false": {
+				"name": "jargon",
+				"description": "some description for the component",
+				"organizationName": "Free all media",
+
+				"repositoryUrl": "someRepoUrl",
+				"issueTrackerUrl": "someIssueTrackerUrl",
+				"homepage": "someHomepageanswer",
+
+				"travis": false,
+
+				"floobits": false,
+
+				"sauceLabs": false,
+
+				"david": false,
+
+				"codeClimate": false,
+
+				"gitHub": false
+			}
+		};
 	});
 
 	describe("(with all false)", () => {
 
 		before(done => {
-			const basePath = path.join(os.tmpdir(), "/temp-test-false");
 			//create initial files and dires with a certain content
 			rimraf(basePath, () => {
-				falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
+				context = helpers.run(path.join(__dirname, "../../generators/app"))
 					.inDir(basePath)
 					.withOptions({ "skip-install": true })
-					.withPrompts({
-						name: name,
-						description: descriptionAnswer,
-						organizationName: organizationNameAnswer,
-						floobits: false,
-						sauceLabs: false,
-						travis: false,
-						repositoryUrl: repositoryUrlAnswer,
-						issueTrackerUrl: issueTrackerUrlAnswer,
-						homepage: homepageAnswer,
-						david: false,
-						codeClimate: false,
-
-						gitHubOrganizationName: gitHubOrganizationNameAnswer,
-						gitHubAutomate: false
-					})
+					.withPrompts(answers.false)
 					.on("end", done);
 			});
 		});
 
 		describe("(general information)", () => {
 			it("should set name property correctly", () => {
-				falseRunningContext.generator.context.name.should.equal(name);
+				context.generator.context.name.should.equal(answers.false.name);
 			});
 
 			it("should set description property correctly", () => {
-				falseRunningContext.generator.context.description.should.equal(descriptionAnswer);
+				context.generator.context.description.should.equal(answers.false.description);
 			});
 
 			it("should set organizationName property correctly", () => {
-				falseRunningContext.generator.context.organizationName.should.equal(organizationNameAnswer);
-			});
-
-			it("should set gitHubOrganizationName property correctly", () => {
-				falseRunningContext.generator.context.gitHubOrganizationName.should.equal(gitHubOrganizationNameAnswer);
+				context.generator.context.organizationName.should.equal(answers.false.organizationName);
 			});
 
 			it("should set repositoryUrl property correctly", () => {
-				falseRunningContext.generator.context.repositoryUrl.should.equal(repositoryUrlAnswer);
+				context.generator.context.repositoryUrl.should.equal(answers.false.repositoryUrl);
 			});
 
 			it("should set issueTrackerUrl property correctly", () => {
-				falseRunningContext.generator.context.issueTrackerUrl.should.equal(issueTrackerUrlAnswer);
+				context.generator.context.issueTrackerUrl.should.equal(answers.false.issueTrackerUrl);
 			});
 
 			it("should set homepage property correctly", () => {
-				falseRunningContext.generator.context.homepage.should.equal(homepageAnswer);
+				context.generator.context.homepage.should.equal(answers.false.homepage);
 			});
 		});
 
@@ -165,37 +161,13 @@ describe("oss-component generator", function() {
 	});
 
 	describe("(with all true)", () => {
+
 		before(done => {
-			const basePath = path.join(os.tmpdir(), "/temp-test");
 			rimraf(basePath, () => {
-				runningContext = helpers.run(path.join(__dirname, "../../generators/app"))
+				context = helpers.run(path.join(__dirname, "../../generators/app"))
 					.inDir(basePath)
 					.withOptions({ "skip-install": true })
-					.withPrompts({
-						name: name,
-						description: descriptionAnswer,
-						organizationName: organizationNameAnswer,
-						floobits: floobitsAnswer,
-						sauceLabs: sauceLabsAnswer,
-						travis: travisAnswer,
-						floobitsWorkspace: floobitsWorkspaceAnswer,
-						repositoryUrl: repositoryUrlAnswer,
-						issueTrackerUrl: issueTrackerUrlAnswer,
-						homepage: homepageAnswer,
-						sauceLabsAccessToken: sauceLabsAccessTokenAnswer,
-						sauceLabsUserName: sauceLabsUserNameAnswer,
-						david: davidAnswer,
-						davidRepo: davidRepoAnswer,
-						codeClimate: codeClimateAnswer,
-						codeClimateRepo: codeClimateRepoAnswer,
-						codeClimateRepoToken: codeClimateRepoTokenAnswer,
-
-						gitHubOrganizationName: gitHubOrganizationNameAnswer,
-						gitHubAutomate: true,
-
-						gitHubClientId: gitHubClientIdAnswer,
-						gitHubClientSecret: gitHubClientSecretAnswer
-					})
+					.withPrompts(answers.true)
 					.on("end", done);
 			});
 		});
@@ -203,87 +175,71 @@ describe("oss-component generator", function() {
 		describe("(template context)", () => {
 			describe("(general information)", () => {
 				it("should set name property correctly", () => {
-					runningContext.generator.context.name.should.equal(name);
+					context.generator.context.name.should.equal(answers.true.name);
 				});
 
 				it("should set description property correctly", () => {
-					runningContext.generator.context.description.should.equal(descriptionAnswer);
+					context.generator.context.description.should.equal(answers.true.description);
 				});
 
 				it("should set organizationName property correctly", () => {
-					runningContext.generator.context.organizationName.should.equal(organizationNameAnswer);
+					context.generator.context.organizationName.should.equal(answers.true.organizationName);
 				});
 
-				it("should set gitHubOrganizationName property correctly", () => {
-					runningContext.generator.context.gitHubOrganizationName.should.equal(gitHubOrganizationNameAnswer);
-				});
-
-				it("should set gitHubClientId property correctly", () => {
-					runningContext.generator.context.gitHubClientId.should.equal(gitHubClientIdAnswer);
-				});
-
-				it("should set gitHubClientSecret property correctly", () => {
-					runningContext.generator.context.gitHubClientSecret.should.equal(gitHubClientSecretAnswer);
+				it("should set gitHubAccountName property correctly", () => {
+					context.generator.context.gitHubAccountName.should.equal(answers.true.gitHubAccountName);
 				});
 
 				it("should set repositoryUrl property correctly", () => {
-					runningContext.generator.context.repositoryUrl.should.equal(repositoryUrlAnswer);
+					context.generator.context.repositoryUrl.should.equal(answers.true.repositoryUrl);
 				});
 
 				it("should set issueTrackerUrl property correctly", () => {
-					runningContext.generator.context.issueTrackerUrl.should.equal(issueTrackerUrlAnswer);
+					context.generator.context.issueTrackerUrl.should.equal(answers.true.issueTrackerUrl);
 				});
 
 				it("should set homepage property correctly", () => {
-					runningContext.generator.context.homepage.should.equal(homepageAnswer);
+					context.generator.context.homepage.should.equal(answers.true.homepage);
 				});
 			});
 
 			describe("(floobits)", () => {
 				it("should set floobits correctly", () => {
-					runningContext.generator.context.floobits.should.equal(floobitsAnswer);
+					context.generator.context.floobits.should.equal(answers.true.floobits);
 				});
 
 				it("should set floobits workspace correctly", () => {
-					runningContext.generator.context.floobitsWorkspace.should.equal(floobitsWorkspaceAnswer);
+					context.generator.context.floobitsWorkspace.should.equal(answers.true.floobitsWorkspace);
 				});
 			});
 
 			describe("(codeclimate)", () => {
 				it("should set codeClimate correctly", () => {
-					runningContext.generator.context.codeClimate.should.equal(codeClimateAnswer);
-				});
-
-				it("should set codeClimateRepo workspace correctly", () => {
-					runningContext.generator.context.codeClimateRepo.should.equal(codeClimateRepoAnswer);
-				});
-
-				it("should set codeClimateRepoToken workspace correctly", () => {
-					runningContext.generator.context.codeClimateRepoToken.should.equal(codeClimateRepoTokenAnswer);
+					context.generator.context.codeClimate.should.equal(answers.true.codeClimate);
 				});
 			});
 
 			describe("(david)", () => {
 				it("should set david correctly", () => {
-					runningContext.generator.context.david.should.equal(davidAnswer);
+					context.generator.context.david.should.equal(answers.true.david);
 				});
 
 				it("should set davidRepo workspace correctly", () => {
-					runningContext.generator.context.davidRepo.should.equal(davidRepoAnswer);
+					context.generator.context.davidRepo.should.equal(answers.true.davidRepo);
 				});
 			});
 
 			describe("(sauceLabs)", () => {
 				it("should set sauceLabs correctly", () => {
-					runningContext.generator.context.sauceLabs.should.equal(sauceLabsAnswer);
+					context.generator.context.sauceLabs.should.equal(answers.true.sauceLabs);
 				});
 
 				it("should set sauceLabsUserName workspace correctly", () => {
-					runningContext.generator.context.sauceLabsUserName.should.equal(sauceLabsUserNameAnswer);
+					context.generator.context.sauceLabsUserName.should.equal(answers.true.sauceLabsUserName);
 				});
 
 				it("should set sauceLabsAccessToken workspace correctly", () => {
-					runningContext.generator.context.sauceLabsAccessToken.should.equal(sauceLabsAccessTokenAnswer);
+					context.generator.context.sauceLabsAccessToken.should.equal(answers.true.sauceLabsAccessToken);
 				});
 			});
 		});
@@ -401,16 +357,16 @@ describe("oss-component generator", function() {
 			});
 
 			it("should generate a mock entry point with his test", () => {
-				assert.file([`es6/lib/${name}.js`,
-					`es6/spec/${name}.spec.js`
+				assert.file([`es6/lib/${answers.true.name}.js`,
+					`es6/spec/${answers.true.name}.spec.js`
 				]);
 			});
 
 			//suspended due to the time that takes to install dependencies
 			//tested also with the actual yo command
 			xit("should create es5 compatible files", () => {
-				assert.file([`es5/lib/${name}.js`,
-					`es5/spec/${name}.spec.js`
+				assert.file([`es5/lib/${answers.true.name}.js`,
+					`es5/spec/${answers.true.name}.spec.js`
 				]);
 			});
 		});
@@ -421,11 +377,10 @@ describe("oss-component generator", function() {
 			packageContent;
 
 		before(done => {
-			const basePath = path.join(os.tmpdir(), "/temp-test-override");
 			readmeContent = "# some content";
 			packageContent = `{"dependencies": {"debug": "latest"}}`;
 
-			falseRunningContext = helpers.run(path.join(__dirname, "../../generators/app"))
+			context = helpers.run(path.join(__dirname, "../../generators/app"))
 				.inDir(basePath, () => {
 					//create README.md
 					fs.appendFileSync("./README.md", readmeContent);
@@ -439,28 +394,16 @@ describe("oss-component generator", function() {
 					fs.mkdirSync(path.join(basePath, "es6/spec"));
 				})
 				.withOptions({ "skip-install": true })
-				.withPrompts({
-					name: name,
-					description: descriptionAnswer,
-					organizationName: organizationNameAnswer,
-					floobits: false,
-					sauceLabs: false,
-					travis: false,
-					repositoryUrl: repositoryUrlAnswer,
-					issueTrackerUrl: issueTrackerUrlAnswer,
-					homepage: homepageAnswer,
-					david: false,
-					codeClimate: false
-				})
+				.withPrompts(answers.false)
 				.on("end", done);
 		});
 
 		it("should not create anything on the lib folder if it already exists", () => {
-			assert.noFile(`es6/lib/${name}.js`);
+			assert.noFile(`es6/lib/${answers.false.name}.js`);
 		});
 
 		it("should not create anything on the spec folder if it already exists", () => {
-			assert.noFile(`es6/spec/${name}.spec.js`);
+			assert.noFile(`es6/spec/${answers.false.name}.spec.js`);
 		});
 
 		it("should not override the README.md if it already exists", () => {

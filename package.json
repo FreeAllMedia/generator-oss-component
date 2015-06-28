@@ -51,8 +51,11 @@
   "dependencies": {
     "async": "^1.2.1",
     "babel": "^5.5.8",
+    "chalk": "^1.0.0",
     "flowsync": "^0.1.0",
+    "github": "^0.2.4",
     "jargon": "^0.1.14",
+    "nock": "^2.6.0",
     "run-sequence": "^1.1.0",
     "travis-encrypt": "pwmckenna/node-travis-encrypt",
     "yeoman-generator": "^0.20.1",

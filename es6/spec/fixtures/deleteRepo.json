@@ -1,0 +1,33 @@
+[
+    {
+        "scope": "https://api.github.com:443",
+        "method": "delete",
+        "path": "/repos/dcrockwell/automationTester?access_token=81c44ba9b43a14591914452429d217a77e2bc85d",
+        "body": "",
+        "status": 204,
+        "response": "",
+        "headers": {
+            "server": "GitHub.com",
+            "date": "Sat, 27 Jun 2015 03:57:21 GMT",
+            "connection": "close",
+            "status": "204 No Content",
+            "x-ratelimit-limit": "5000",
+            "x-ratelimit-remaining": "4869",
+            "x-ratelimit-reset": "1435381041",
+            "x-oauth-scopes": "delete_repo, gist, repo, user",
+            "x-accepted-oauth-scopes": "delete_repo",
+            "x-github-media-type": "github.v3; format=json",
+            "x-xss-protection": "1; mode=block",
+            "x-frame-options": "deny",
+            "content-security-policy": "default-src 'none'",
+            "access-control-allow-credentials": "true",
+            "access-control-expose-headers": "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval",
+            "access-control-allow-origin": "*",
+            "x-github-request-id": "43A2988D:4621:10552D4:558E1F21",
+            "strict-transport-security": "max-age=31536000; includeSubdomains; preload",
+            "x-content-type-options": "nosniff",
+            "vary": "Accept-Encoding",
+            "x-served-by": "b0ef53392caa42315c6206737946d931"
+        }
+    }
+]

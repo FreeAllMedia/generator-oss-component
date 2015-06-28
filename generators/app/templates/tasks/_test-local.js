@@ -1,7 +1,6 @@
 import gulp from "gulp";
 import mocha from "gulp-mocha";
 import istanbul from "gulp-istanbul";
-<% if (codeClimate) { %>import codeClimate from "./codeClimate.js";<% } %>
 import paths from "../paths.json";
 
 import chai from "chai";
@@ -17,20 +16,7 @@ gulp.task("test-local", ["build"], (cb) => {
         .pipe(istanbul.writeReports({dir: `${__dirname}/../`, reporters: ["text-summary", "lcovonly"]})) // Creating the reports after tests ran
 		//.pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } })) // Enforce a coverage of at least 90%
         .on("end", () => {
-          <% if (codeClimate) { %>
-            //send report to code climate
-            if (process.env.TRAVIS_BUILD_NUMBER) {
-              if (process.env.TRAVIS_JOB_NUMBER === `${process.env.TRAVIS_BUILD_NUMBER}.1`) {
-                codeClimate("<%= codeClimateRepoToken %>", cb);
-              } else {
-                cb();
-              }
-            } else {
-              codeClimate("<%= codeClimateRepoToken %>", cb);
-            }
-          <% } else { %>
-            cb()
-          <% } %>
+          cb();
         });
     });
 });
