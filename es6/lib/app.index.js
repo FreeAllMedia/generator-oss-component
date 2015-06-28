@@ -3,7 +3,6 @@ import yosay from "yosay";
 import inflect from "jargon";
 import childProcess from "child_process";
 import fs from "fs";
-import chalk from "chalk";
 import async from "flowsync";
 
 const copyFilesIf = Symbol(),
@@ -60,114 +59,35 @@ export default class Component extends yeoman.generators.Base {
 
 			// Repository Details
 			(promptComplete) => {
-				this.log("Repository Details:");
+				this.log("GitHub Details:");
 				ask([
 					{
-						type: "confirm",
-						name: "gitHub",
-						message: "Are you using GitHub?"
+						type: "input",
+						name: "gitHubAccountName",
+						message: "What is the GitHub user or organization name that the component will be published under?",
+						default: "FreeAllMedia"
+					},
+					{
+						type: "input",
+						name: "repositoryUrl",
+						message: "What is your GitHub repository url?",
+						default: `https://github.com/${this.answers.gitHubAccountName}/${this.answers.name}.git`
+					},
+					{
+						type: "input",
+						name: "issueTrackerUrl",
+						message: "What is the issue tracker url for the component?",
+						default: `https://github.com/${this.answers.gitHubAccountName}/${this.answers.name}/issues`
+					},
+					{
+						type: "input",
+						name: "homepage",
+						message: "What is the component homepage?",
+						default: `https://github.com/${this.answers.gitHubAccountName}/${this.answers.name}`
 					}
 				], () => {
-					if (this.answers.gitHub) {
-						askGitHubQuestions(promptComplete);
-					} else {
-						askGenericRepositoryQuestions(promptComplete);
-					}
+					promptComplete();
 				});
-
-				const askGenericRepositoryQuestions = (sectionComplete) => {
-					ask([
-						{
-							type: "input",
-							name: "repositoryUrl",
-							message: "What is your repository url?",
-							default: `https://something.com/something.git`
-						},
-						{
-							type: "input",
-							name: "issueTrackerUrl",
-							message: "What is the issue tracker url for the component?",
-							default: `https://somthing.com/${this.answers.name}/issues`
-						},
-						{
-							type: "input",
-							name: "homepage",
-							message: "What is the component homepage?",
-							default: `https://yoursite.com/`
-						}
-					], () => {
-						sectionComplete();
-					});
-				};
-
-				const askGitHubQuestions = (sectionComplete) => {
-					this.log("GitHub:");
-					ask([
-						{
-							type: "input",
-							name: "gitHubAccountName",
-							message: "What is the GitHub user or organization name that the component will be published under?",
-							default: "FreeAllMedia"
-						},
-						{
-							type: "confirm",
-							name: "gitHubReady",
-							message: "Is the repository already setup on GitHub?",
-							default: false
-						}
-					], (answers) => {
-						if (!answers.gitHubReady) {
-							askGitHubSetupQuestions(sectionComplete);
-						} else {
-							askGitHubUrlQuestions(sectionComplete);
-						}
-					});
-
-					const askGitHubSetupQuestions = (subSectionComplete) => {
-						this.log(yosay("Whoa there, partner! You need to create a GitHub repository before you can move on!"));
-						this.log(`1. Go to: ${chalk.bold.red("https://github.com/new")}`);
-						this.log(`\ta. Create a new repository called "${chalk.bold.yellow(this.answers.gitHubAccountName + "/" + this.answers.name)}"`);
-						this.log(`\tb. Use description: "${chalk.bold.yellow(this.answers.description)}"`);
-						this.log(`2. Go to: ${chalk.bold.red("https://github.com/" + this.answers.gitHubAccountName + "/" + this.answers.name + "/settings/collaboration")}`);
-						this.log(`\ta. Add the appropriate teams as collaborators.`);
-						this.log();
-
-						ask([
-							{
-								type: "input",
-								name: "gitHubReady",
-								message: "Hit enter after all steps are complete to move on"
-							}
-						], () => {
-							askGitHubUrlQuestions(subSectionComplete);
-						});
-					};
-
-					const askGitHubUrlQuestions = (subSectionComplete) => {
-						ask([
-							{
-								type: "input",
-								name: "repositoryUrl",
-								message: "What is your GitHub repository url?",
-								default: `https://github.com/${this.answers.gitHubAccountName}/${this.answers.name}.git`
-							},
-							{
-								type: "input",
-								name: "issueTrackerUrl",
-								message: "What is the issue tracker url for the component?",
-								default: `https://github.com/${this.answers.gitHubAccountName}/${this.answers.name}/issues`
-							},
-							{
-								type: "input",
-								name: "homepage",
-								message: "What is the component homepage?",
-								default: `https://github.com/${this.answers.gitHubAccountName}/${this.answers.name}`
-							}
-						], () => {
-							subSectionComplete();
-						});
-					};
-				};
 			},
 
 			// Collaborative Coding
@@ -208,23 +128,8 @@ export default class Component extends yeoman.generators.Base {
 						message: "Do you want this component to integrate with SauceLabs?",
 						default: false
 					}
-				], (answer) => {
-					this.answers.sauceLabs = answer.sauceLabs;
+				], () => {
 					if (this.answers.sauceLabs) {
-						// ask([
-						// 	{
-						// 		type: "confirm",
-						// 		name: "sauceLabsReady",
-						// 		message: `Do you have a SauceLabs account setup for "${this.answers.name}"?`,
-						// 		default: false
-						// 	}
-						// ], () => {
-
-
-
-						// });
-
-
 						ask([
 							{
 								type: "input",
