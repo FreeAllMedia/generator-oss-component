@@ -260,10 +260,6 @@ export default class Component extends yeoman.generators.Base {
 			"tasks/_test.js"]
 		);
 
-		if(this.answers.codeClimate) {
-			this[copyFilesIf](["_.codeclimate.yml", "tasks/_codeClimate.js",]);
-		}
-
 		if(this.answers.floobits) {
 			this[copyFilesIf](["_.floo", "_.flooignore"]);
 		}
@@ -283,7 +279,7 @@ export default class Component extends yeoman.generators.Base {
 		if (this.answers.sauceLabs) {
 			const result = childProcess.spawnSync(
 				"node",
-				[`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-ar`, `${this.answers.gitHubAccountName}/${this.answers.name}`, `SAUCE_USERNAME=${this.answers.sauceLabsUserName}`, `SAUCE_ACCESS_KEY=${this.answers.sauceLabsAccessToken}`, `CODECLIMATE_REPO_TOKEN=${this.answers.codeClimateRepo}`],
+				[`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-ar`, `${this.answers.gitHubAccountName}/${this.answers.name}`, `SAUCE_USERNAME=${this.answers.sauceLabsUserName}`, `SAUCE_ACCESS_KEY=${this.answers.sauceLabsAccessToken}`],
 				{
 					cwd: `${this.destinationRoot()}`,
 					encoding: "utf8"
