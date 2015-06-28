@@ -1,4 +1,4 @@
-# <%= componentNamePascalCase %>.js [![npm version](https://img.shields.io/npm/v/<%= name %>.svg)](https://www.npmjs.com/package/<%= name %>) [![license type](https://img.shields.io/npm/l/<%= name %>.svg)](<%= repositoryUrl %>/blob/master/LICENSE) [![npm downloads](https://img.shields.io/npm/dm/<%= name %>.svg)](https://www.npmjs.com/package/<%= name %>) ![ECMAScript 6](https://img.shields.io/badge/ECMAScript-6-red.svg)
+# <%= componentNamePascalCase %>.js [![npm version](https://img.shields.io/npm/v/<%= name %>.svg)](https://www.npmjs.com/package/<%= name %>) [![license type](https://img.shields.io/npm/l/<%= name %>.svg)](<%= repositoryUrl %>/blob/master/LICENSE) [![npm downloads](https://img.shields.io/npm/dm/<%= name %>.svg)](https://www.npmjs.com/package/<%= name %>) ![ECMAScript 6 & 5](https://img.shields.io/badge/ECMAScript-6%20/%205-red.svg)
 
 <%= description %>
 
@@ -79,19 +79,6 @@ It's easy to run the test suite locally, and *highly recommended* if you're usin
 npm test
 ```
 
-<% if (sauceLabs) { %>
-### SauceLabs Credentials
-
-We've setup our tests to automatically detect whether or not you have our saucelabs credentials installed in your environment (`process.env.SAUCE_USERNAME`).
-
-If our saucelabs credentials are not installed, the tests are setup to automatically detect all browsers you have installed on your local system, then use them to run the tests.
-
-#### Obtaining Our SauceLabs Credentials
-
-If you'd like to develop <%= componentNamePascalCase %>.js using SauceLabs, you need only create a new entry in our [issue tracker](<%= issueTrackerUrl %>) asking for our SauceLabs credentials.
-
-We'll send over all credentials specific to this project so that you can perform comprehensive cross-platform tests.
-<% } %>
 <% if (floobits) { %>
 ## Public Shared Floobits Workspace
 
