@@ -1,274 +1,330 @@
 import yeoman from "yeoman-generator";
 import yosay from "yosay";
 import inflect from "jargon";
-import encrypt from "travis-encrypt";
 import childProcess from "child_process";
+import fs from "fs";
+import async from "flowsync";
 
-const copyFiles = Symbol(),
-  installAndTest = Symbol();
+const copyFilesIf = Symbol(),
+	installAndTest = Symbol();
 
 export default class Component extends yeoman.generators.Base {
 	initializing() {
 		this.pkg = require("../../package.json");
+		this.answers = {};
 	}
 
 	prompting() {
-		let done = this.async();
+		const done = this.async();
+
 		// Have Yeoman greet the user.
 		this.log(yosay(
-			"Welcome to the stylish OSS component generator! our base path is " + this.destinationRoot()
+			"Welcome to the stylish OSS component generator! Let's begin with some questions about the component itself:"
 		));
 
-		let prompts = [{
-			type: "input",
-			name: "name",
-			message: "What is the component name? (camel case please => exactlyLikeThis)",
-			default: "myComponent"
-		}, {
-			type: "input",
-			name: "description",
-			message: "What is the component description?",
-			default: "This is a component to say something."
-		}, {
-      type: "input",
-      name: "organizationName",
-      message: "What is your organization name?",
-      default: "Free All Media"
-    }, {
-      type: "input",
-      name: "organizationType",
-      message: "What is your organization type?",
-      default: "LLC"
-    }, {
-			type: "confirm",
-			name: "floobits",
-			message: "There is a Floobits workspace for this repo (Development Real-time Collaboration)?",
-			default: true
-		}, {
-			type: "confirm",
-			name: "sauceLabs",
-			message: "do you want to add SauceLabs (Cross Browser Testing)?",
-			default: true
-		}, {
-      type: "confirm",
-      name: "travis",
-      message: "do you want to add Travis (Continuous Integration) support?",
-      default: true
-    }, {
-      type: "confirm",
-      name: "codeClimate",
-      message: "do you want to add Code Climate (Code Quality) support?",
-      default: true
-    }, {
-      type: "confirm",
-      name: "david",
-      message: "do you want to add David (Dependency Management) support?",
-      default: true
-    }];
+		const ask = (questions, callback) => {
+			this.prompt(questions, (answers) => {
+			for (let answerName in answers) { this.answers[answerName] = answers[answerName]; }
+				callback(this.answers);
+			});
+		};
 
-		// https://github.com/FreeAllMedia/jargon
-		this.prompt(prompts, function (newProperties) {
-			this.properties = newProperties;
-      this.properties.organizationNameCamelCase = inflect(this.properties.organizationName).camel.toString();
-      this.properties.organizationNamePascalCase = inflect(this.properties.organizationName).camel.pascal.toString();
-      this.properties.repoSuffix = `${this.properties.organizationNamePascalCase}/${this.properties.name}`;
+		const prompts = [
+			// Component Details
+			(promptComplete) => {
+				this.log("Component Details:");
+				ask([
+					{
+						type: "input",
+						name: "name",
+						message: "What is the component's package name, in camel case? (exactlyLikeThis)",
+						default: "myComponent"
+					},
+					{
+						type: "input",
+						name: "description",
+						message: "How would you describe the component?",
+						default: "It cuts fries. It dices onions."
+					},
+					{
+						type: "input",
+						name: "organizationName",
+						message: "What is your organization name?",
+						default: "Free All Media, LLC"
+					}
+				], () => {
+					promptComplete();
+				});
+			},
 
-			prompts = [{
-					type: "input",
-					name: "repositoryUrl",
-					message: "What is your repo url?",
-					default: `https://github.com/${this.properties.repoSuffix}.git`
-				}, {
-					type: "input",
-					name: "issueTrackerUrl",
-					message: "What is the issue tracker url for the component?",
-					default: `https://github.com/${this.properties.repoSuffix}/issues`
-				}, {
-          type: "input",
-          name: "homepage",
-          message: "What is the component homepage?",
-          default: `https://github.com/${this.properties.repoSuffix}`
-        }, {
-          type: "input",
-          name: "floobitsWorkspace",
-          message: "What is the floobits workspace url?",
-          default: `https://floobits.com/${this.properties.repoSuffix}`,
-          when:
-            () => {
-              return this.properties.floobits;
-            }
-        }, {
-          type: "input",
-          name: "sauceLabsUserName",
-          message: "Please provide the user name for Sauce Labs (if the Travis slug is already linked, we will encrypt it into the travis yaml for you)",
-          default: `${this.properties.organizationNameCamelCase}`,
-          when:
-            () => {
-              return this.properties.sauceLabs;
-            }
-        }, {
-          type: "input",
-          name: "sauceLabsAccessToken",
-          message: "Paste here the access token for Sauce Labs (we will encrypt it for you, too)",
-          default: ``,
-          when:
-            () => {
-              return this.properties.sauceLabs;
-            }
-        }, {
-          type: "input",
-          name: "codeClimateRepo",
-          message: "Paste here the Code Climate Repo code",
-          default: ``,
-          when:
-            () => {
-              return this.properties.codeClimate;
-            }
-        }, {
-          type: "input",
-          name: "codeClimateBadge",
-          message: "Paste here the Code Climate Badge code",
-          default: ``,
-          when:
-            () => {
-              return this.properties.codeClimate;
-            }
-        }, {
-          type: "input",
-          name: "davidRepo",
-          message: "Confirm or paste a new David url",
-          default: `https://david-dm.org/${this.properties.repoSuffix}`,
-          when:
-            () => {
-              return this.properties.david;
-            }
-        }];
+			// Repository Details
+			(promptComplete) => {
+				this.log("GitHub Details:");
+				ask([
+					{
+						type: "input",
+						name: "gitHubAccountName",
+						message: "What is the GitHub user or organization name that the component will be published under?",
+						default: "FreeAllMedia"
+					},
+					{
+						type: "input",
+						name: "repositoryUrl",
+						message: "What is your GitHub repository url?",
+						default: `https://github.com/${this.answers.gitHubAccountName}/${this.answers.name}.git`
+					},
+					{
+						type: "input",
+						name: "issueTrackerUrl",
+						message: "What is the issue tracker url for the component?",
+						default: `https://github.com/${this.answers.gitHubAccountName}/${this.answers.name}/issues`
+					},
+					{
+						type: "input",
+						name: "homepage",
+						message: "What is the component homepage?",
+						default: `https://github.com/${this.answers.gitHubAccountName}/${this.answers.name}`
+					}
+				], () => {
+					promptComplete();
+				});
+			},
 
-			this.prompt(prompts, function (newProperties) {
-        // Object.assign(this.properties, newProperties);
-				this.properties.floobitsWorkspace = newProperties.floobitsWorkspace;
-				this.properties.repositoryUrl = newProperties.repositoryUrl;
-				this.properties.issueTrackerUrl = newProperties.issueTrackerUrl;
-				this.properties.homepage = newProperties.homepage;
-        this.properties.sauceLabsAccessToken = newProperties.sauceLabsAccessToken;
-        this.properties.sauceLabsUserName = newProperties.sauceLabsUserName;
-        this.properties.codeClimateRepo = newProperties.codeClimateRepo;
-        this.properties.codeClimateBadge = newProperties.codeClimateBadge;
-        this.properties.davidRepo = newProperties.davidRepo;
-        done();
-			}.bind(this));
-		}.bind(this));
+			// Collaborative Coding
+			(promptComplete) => {
+				this.log("Collaborative Coding:");
+				ask([
+					{
+						type: "confirm",
+						name: "floobits",
+						message: "Do you want this component to integrate with Floobits?",
+						default: false
+					}
+				], () => {
+					if (this.answers.floobits) {
+						ask([
+							{
+								type: "input",
+								name: "floobitsWorkspace",
+								message: "What is the floobits workspace url?",
+								default: `https://floobits.com/${this.answers.gitHubAccountName}/${this.answers.name}`
+							}
+						], () => {
+							promptComplete();
+						});
+					} else {
+						promptComplete();
+					}
+				});
+			},
+
+			// Cross-Browser Testing
+			(promptComplete) => {
+				this.log("Cross-Browser Testing:");
+				ask([
+					{
+						type: "confirm",
+						name: "sauceLabs",
+						message: "Do you want this component to integrate with SauceLabs?",
+						default: false
+					}
+				], () => {
+					if (this.answers.sauceLabs) {
+						ask([
+							{
+								type: "input",
+								name: "sauceLabsUserName",
+								message: "Please provide the user name for Sauce Labs (if the Travis slug is already linked, we will encrypt it into the travis yaml for you)",
+								default: `${this.answers.name}`
+							},
+							{
+								type: "input",
+								name: "sauceLabsAccessToken",
+								message: "Paste here the access token for Sauce Labs (we will encrypt it for you, too)",
+								default: ``
+							}
+						], () => {
+							promptComplete();
+						});
+					} else {
+						promptComplete();
+					}
+				});
+			},
+
+			// Code Quality Testing
+			(promptComplete) => {
+				this.log("Code Quality Testing:");
+				ask([
+					{
+						type: "confirm",
+						name: "codeClimate",
+						message: "Do you want this component to integrate with CodeClimte?",
+						default: false
+					}
+				], () => {
+					promptComplete();
+				});
+			},
+
+			// Continuous Integration
+			(promptComplete) => {
+				this.log("Continuous Integration:");
+				ask([
+					{
+						type: "confirm",
+						name: "travis",
+						message: "Do you want this component to integrate with Travic-CI?",
+						default: false
+					}
+				], () => {
+					promptComplete();
+				});
+			},
+
+			// Depedency Management
+			(promptComplete) => {
+				this.log("Depedency Management:");
+				ask([
+					{
+						type: "confirm",
+						name: "david",
+						message: "Do you want this component to integrate with David-DM??",
+						default: false
+					}
+				], () => {
+					if (this.answers.david) {
+						ask([
+							{
+								type: "input",
+								name: "davidRepo",
+								message: "Confirm or paste a new David url",
+								default: `https://david-dm.org/${this.answers.gitHubAccountName}/${this.answers.name}`
+							}
+						], () => {
+							promptComplete();
+						});
+					} else {
+						promptComplete();
+					}
+				});
+			}
+		];
+
+		async.series(prompts, done);
+	}
+
+	configuring() {
 	}
 
 	writing() {
-    this.context = {
-			name: this.properties.name,
-			description: this.properties.description,
-      floobits: this.properties.floobits,
-			floobitsWorkspace: this.properties.floobitsWorkspace,
-      organizationNamePascalCase: this.properties.organizationNamePascalCase,
-			componentNamePascalCase: inflect(this.properties.name).pascal.toString(),
-			organizationName: this.properties.organizationName,
-      organizationType: this.properties.organizationType,
-			homepage: this.properties.homepage,
-			repositoryUrl: this.properties.repositoryUrl,
-			issueTrackerUrl: this.properties.issueTrackerUrl,
-      travis: this.properties.travis,
-      sauceLabs: this.properties.sauceLabs,
-      sauceLabsUserName: this.properties.sauceLabsUserName || "",
-      sauceLabsAccessToken: this.properties.sauceLabsAccessToken || "",
-      codeClimate: this.properties.codeClimate,
-      codeClimateBadge: this.properties.codeClimateBadge || "",
-      codeClimateRepo: this.properties.codeClimateRepo || "",
-      david: this.properties.david,
-      davidRepo: this.properties.davidRepo || ""
-		};
+		this.context = {};
+
+		for (let propertyName in this.answers) {	this.context[propertyName] = this.answers[propertyName]; }
+
+		this.context.componentNamePascalCase = inflect(this.context.name).pascal.toString();
+
+		try {
+			let f = fs.statSync(this.destinationPath("es6/lib"));
+		} catch(e) {
+			this[copyFilesIf](["es6/lib/_##componentName##.js",
+				"es6/spec/_##componentName##.spec.js"]
+			);
+		}
+
+		this[copyFilesIf](["_README.md",
+			"_package.json"], function(destination) {
+				try {
+					fs.statSync(destination);
+					return false;
+				} catch(e) {
+					return true;
+				}
+			});
 
 		// copy files
-		this[copyFiles](["_.eslintrc",
+		this[copyFilesIf](["_.eslintrc",
 			"_.gitignore",
 			"_.jshintrc",
 			"_.karma.conf.js",
-			"_LICENSE.md",
-			"_README.md",
-			"_package.json",
+			"_LICENSE",
 			"_gulpfile.babel.js",
 			"_index.js",
 			"_paths.json",
-      "_.editorconfig",
+			"_.editorconfig",
 			"tasks/_build.js",
 			"tasks/_build-lib.js",
 			"tasks/_build-spec.js",
 			"tasks/_test-local.js",
 			"tasks/_test-browsers.js",
-			"tasks/_test.js",
-			"es6/lib/_##componentName##.js",
-			"es6/spec/_##componentName##.spec.js"]
+			"tasks/_test.js"]
 		);
 
-    if(this.properties.codeClimate) {
-      this[copyFiles](["_.codeclimate.yml"]);
-    }
-
-		if(this.properties.floobits) {
-			this[copyFiles](["_.floo", "_.flooignore"]);
+		if(this.answers.codeClimate) {
+			this[copyFilesIf](["_.codeclimate.yml", "tasks/_codeClimate.js",]);
 		}
 
-		if(this.properties.sauceLabs) {
-			this[copyFiles](["_.sauce.json"]);
+		if(this.answers.floobits) {
+			this[copyFilesIf](["_.floo", "_.flooignore"]);
 		}
 
-		if(this.properties.travis) {
-			this[copyFiles](["_.travis.yml"]);
+		if(this.answers.sauceLabs) {
+			this[copyFilesIf](["_.sauce.json"]);
+		}
+
+		if(this.answers.travis) {
+			this[copyFilesIf](["_.travis.yml"]);
 		}
 	}
 
 	install() {
-    //generate travis crypted environment vars and append to the travis YAML
-    if(this.properties.sauceLabs) {
-      const commandString = `node`;
-      const result = childProcess.spawnSync(
-        commandString,
-        [`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-ar`, `${this.properties.repoSuffix}`, `SAUCE_USERNAME=${this.properties.sauceLabsUserName}`, `SAUCE_ACCESS_TOKEN=${this.properties.sauceLabsAccessToken}`],
-        {
-          cwd: `${this.destinationRoot()}`,
-          encoding: "utf8"
-        }
-      );
-      if(result.error) {
-        process.stdout.write("\nWARNING: TRAVIS ENCRYPT ERROR \n", result.error);
-      } else if (result.stderr) {
-        process.stdout.write(`\nWARNING: TRAVIS ENCRYPT COMMAND ERROR (maybe repo not found at ${this.properties.repoSuffix}?) \n`);
-      }
-    }
 
-    this[installAndTest]();
+		//generate travis crypted environment vars and append to the travis YAML
+		if (this.answers.sauceLabs) {
+			const result = childProcess.spawnSync(
+				"node",
+				[`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-ar`, `${this.answers.gitHubAccountName}/${this.answers.name}`, `SAUCE_USERNAME=${this.answers.sauceLabsUserName}`, `SAUCE_ACCESS_KEY=${this.answers.sauceLabsAccessToken}`, `CODECLIMATE_REPO_TOKEN=${this.answers.codeClimateRepo}`],
+				{
+					cwd: `${this.destinationRoot()}`,
+					encoding: "utf8"
+				}
+			);
+			if(result.error) {
+				process.stdout.write("\nWARNING: TRAVIS ENCRYPT ERROR \n", result.error);
+			} else if (result.stderr) {
+				process.stdout.write(`\nWARNING: TRAVIS ENCRYPT COMMAND ERROR (maybe repo not found at ${this.answers.gitHubAccountName}/${this.answers.name}?) \n`);
+			}
+		}
+
+		this[installAndTest]();
 	}
 
-  //PRIVATE METHODS
+	//PRIVATE METHODS
 
-  [copyFiles](files) {
-    files.forEach((templatePath) => {
-      let newName = templatePath.replace("_", "");
-      newName = newName.replace("##componentName##", this.context.name);
-      this.fs.copyTpl(
-        this.templatePath(templatePath),
-        this.destinationPath(`${newName}`),
-        this.context
-      );
-    }, this);
-  }
+	[copyFilesIf](files, predicate = function() {return true; }) {
+		files.forEach((templatePath) => {
+			let newName = templatePath.replace("_", "");
+			newName = newName.replace("##componentName##", this.context.name);
+			if(predicate(this.destinationPath(newName))) {
+				this.fs.copyTpl(
+					this.templatePath(templatePath),
+					this.destinationPath(`${newName}`),
+					this.context
+				);
+			}
+		}, this);
+	}
 
-  [installAndTest]() {
-    this.installDependencies({
-      skipInstall: this.options['skip-install'],
-      callback: function callbackInstallDependencies() {
-        //gulp test execution if there is a local gulp there already
-        if(!this.options['skip-install']) {
-          this.spawnCommand("gulp", ["test"]);
-        }
-      }.bind(this)
-    });
-  }
+	[installAndTest]() {
+		this.installDependencies({
+			skipInstall: this.options['skip-install'],
+			callback: function callbackInstallDependencies() {
+				//gulp test execution if there is a local gulp there already
+				if(!this.options['skip-install']) {
+					this.spawnCommand("gulp", ["test"]);
+				}
+			}.bind(this)
+		});
+	}
 
 }
