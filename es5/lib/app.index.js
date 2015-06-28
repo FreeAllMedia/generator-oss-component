@@ -107,23 +107,25 @@ var Component = (function (_yeoman$generators$Base) {
 					name: "gitHubAccountName",
 					message: "What is the GitHub user or organization name that the component will be published under?",
 					"default": "FreeAllMedia"
-				}, {
-					type: "input",
-					name: "repositoryUrl",
-					message: "What is your GitHub repository url?",
-					"default": "https://github.com/" + _this.answers.gitHubAccountName + "/" + _this.answers.name + ".git"
-				}, {
-					type: "input",
-					name: "issueTrackerUrl",
-					message: "What is the issue tracker url for the component?",
-					"default": "https://github.com/" + _this.answers.gitHubAccountName + "/" + _this.answers.name + "/issues"
-				}, {
-					type: "input",
-					name: "homepage",
-					message: "What is the component homepage?",
-					"default": "https://github.com/" + _this.answers.gitHubAccountName + "/" + _this.answers.name
 				}], function () {
-					promptComplete();
+					ask([{
+						type: "input",
+						name: "repositoryUrl",
+						message: "What is your GitHub repository url?",
+						"default": "https://github.com/" + _this.answers.gitHubAccountName + "/" + _this.answers.name + ".git"
+					}, {
+						type: "input",
+						name: "issueTrackerUrl",
+						message: "What is the issue tracker url for the component?",
+						"default": "https://github.com/" + _this.answers.gitHubAccountName + "/" + _this.answers.name + "/issues"
+					}, {
+						type: "input",
+						name: "homepage",
+						message: "What is the component homepage?",
+						"default": "https://github.com/" + _this.answers.gitHubAccountName + "/" + _this.answers.name
+					}], function () {
+						promptComplete();
+					});
 				});
 			},
 

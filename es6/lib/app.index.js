@@ -87,7 +87,9 @@ export default class Component extends yeoman.generators.Base {
 							message: "What is the component homepage?",
 							default: `https://github.com/${this.answers.gitHubAccountName}/${this.answers.name}`
 						}
-					], promptComplete);
+					], () => {
+						promptComplete();
+					});
 				});
 			},
 
