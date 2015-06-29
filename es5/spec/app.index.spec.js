@@ -340,7 +340,7 @@ describe("oss-component generator", function () {
 
 		describe("(automation)", function () {
 			it("should create gulp related files", function () {
-				_yeomanGenerator.assert.file(["gulpfile.babel.js", "tasks/build.js", "tasks/build-lib.js", "tasks/build-spec.js", "tasks/test.js", "tasks/test-local.js", "tasks/test-browsers.js", "paths.json"]);
+				_yeomanGenerator.assert.file(["gulpfile.babel.js", "tasks/build.js", "tasks/build-lib.js", "tasks/build-lib-assets.js", "tasks/build-spec.js", "tasks/build-spec-assets.js", "tasks/test.js", "tasks/test-local.js", "tasks/test-browsers.js", "paths.json"]);
 			});
 		});
 

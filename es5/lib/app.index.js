@@ -264,7 +264,7 @@ var Component = (function (_yeoman$generators$Base) {
 			});
 
 			// copy files
-			this[copyFilesIf](["_.eslintrc", "_.gitignore", "_.jshintrc", "_.karma.conf.js", "_LICENSE", "_gulpfile.babel.js", "_index.js", "_paths.json", "_.editorconfig", "tasks/_build.js", "tasks/_build-lib.js", "tasks/_build-spec.js", "tasks/_test-local.js", "tasks/_test-browsers.js", "tasks/_test.js"]);
+			this[copyFilesIf](["_.eslintrc", "_.gitignore", "_.jshintrc", "_.karma.conf.js", "_LICENSE", "_gulpfile.babel.js", "_index.js", "_paths.json", "_.editorconfig", "tasks/_build.js", "tasks/_build-lib.js", "tasks/_build-lib-assets.js", "tasks/_build-spec.js", "tasks/_build-spec-assets.js", "tasks/_test-local.js", "tasks/_test-browsers.js", "tasks/_test.js"]);
 
 			if (this.answers.floobits) {
 				this[copyFilesIf](["_.floo", "_.flooignore"]);

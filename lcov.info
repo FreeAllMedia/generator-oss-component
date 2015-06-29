@@ -1,5 +1,5 @@
 TN:
-SF:/Users/dslieker/Documents/source-code/generator-oss-component/es5/lib/app.index.js
+SF:/home/intag/workspace/fam/generator-oss-component/es5/lib/app.index.js
 FN:7,(anonymous_1)
 FN:7,defineProperties
 FN:7,(anonymous_3)
@@ -76,8 +76,8 @@ FNDA:3,writing
 FNDA:6,(anonymous_33)
 FNDA:3,install
 FNDA:11,(anonymous_35)
-FNDA:53,(anonymous_36)
-FNDA:59,(anonymous_37)
+FNDA:59,(anonymous_36)
+FNDA:65,(anonymous_37)
 FNDA:3,(anonymous_38)
 FNDA:3,callbackInstallDependencies
 DA:3,1
@@ -176,12 +176,12 @@ DA:294,0
 DA:298,3
 DA:306,11
 DA:308,11
-DA:309,53
+DA:309,59
 DA:312,11
-DA:313,59
-DA:314,59
-DA:315,59
-DA:316,57
+DA:313,65
+DA:314,65
+DA:315,65
+DA:316,63
 DA:323,3
 DA:327,3
 DA:328,0
@@ -234,7 +234,7 @@ BRDA:293,21,0,0
 BRDA:293,21,1,1
 BRDA:308,22,0,8
 BRDA:308,22,1,3
-BRDA:315,23,0,57
+BRDA:315,23,0,63
 BRDA:315,23,1,2
 BRDA:327,24,0,0
 BRDA:327,24,1,3
