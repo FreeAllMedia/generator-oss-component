@@ -32,6 +32,10 @@ describe("oss-component generator", function() {
 				"homepage": "someHomepageanswer",
 
 				"travis": true,
+				"npmPublish": true,
+				"npmEmail": "somenpmmail",
+				"npmUserName": "somenpmuser",
+				"npmPassword": "somenpmpassword",
 
 				"floobits": true,
 				"floobitsWorkspace": "floobits.com/someFlooobitsWorkspace",
