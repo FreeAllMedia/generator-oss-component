@@ -1,6 +1,6 @@
 {
   "name": "generator-oss-component",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "generator for open source components",
   "main": "generators/app/index.js",
   "scripts": {
@@ -45,6 +45,7 @@
     "gulp-mocha": "^2.1.1",
     "gulp-run": "^1.6.8",
     "gulp-watch": "^4.2.4",
+    "karma": "^0.12.37",
     "mocha": "^2.2.5",
     "rimraf": "^2.4.0",
     "sinon": "^1.15.3"
