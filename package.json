@@ -1,6 +1,6 @@
 {
   "name": "generator-oss-component",
-  "version": "0.2.7",
+  "version": "0.2.9",
   "description": "generator for open source components",
   "main": "generators/app/index.js",
   "scripts": {
@@ -34,10 +34,11 @@
   },
   "homepage": "https://github.com/FreeAllMedia/generator-oss-component#readme",
   "devDependencies": {
-    "async": "^1.2.1",
     "babel-core": "^5.5.8",
+    "babel-eslint": "^3.1.20",
     "chai": "^3.0.0",
     "codeclimate-test-reporter": "0.0.4",
+    "eslint": "^0.24.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.1.0",
     "gulp-istanbul": "^0.10.0",
@@ -49,7 +50,6 @@
     "sinon": "^1.15.3"
   },
   "dependencies": {
-    "async": "^1.2.1",
     "babel": "^5.5.8",
     "chalk": "^1.0.0",
     "flowsync": "^0.1.0",

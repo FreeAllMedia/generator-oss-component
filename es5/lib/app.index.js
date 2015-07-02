@@ -171,7 +171,7 @@ var Component = (function (_yeoman$generators$Base) {
 						}, {
 							type: "input",
 							name: "sauceLabsAccessToken",
-							message: "Paste here the access token for Sauce Labs (we will encrypt it for you, too)",
+							message: "Paste here the access key for Sauce Labs (we will encrypt it for you, too)",
 							"default": ""
 						}], function () {
 							promptComplete();
@@ -206,6 +206,42 @@ var Component = (function (_yeoman$generators$Base) {
 				}], function () {
 					promptComplete();
 				});
+			},
+			//npm publish
+			function (promptComplete) {
+				if (_this.answers.travis) {
+					ask([{
+						type: "confirm",
+						name: "npmPublish",
+						message: "Do you want this component to be published to npm on your behalf after a succesful build on travis?",
+						"default": false
+					}], function () {
+						if (_this.answers.npmPublish) {
+							ask([{
+								type: "input",
+								name: "npmEmail",
+								message: "Please provide the email for Npm (we will add it to the travis yaml for you onto the deploy section)",
+								"default": ""
+							}, {
+								type: "input",
+								name: "npmUserName",
+								message: "Please provide the user name for Npm (yeah, we will encrypt it into the travis yaml for you)",
+								"default": ""
+							}, {
+								type: "input",
+								name: "npmPassword",
+								message: "Provide the npm password (encrypted as well, with this and the username we create the api key that gets encrypted to the YAML)",
+								"default": ""
+							}], function () {
+								promptComplete();
+							});
+						} else {
+							promptComplete();
+						}
+					});
+				} else {
+					promptComplete();
+				}
 			},
 
 			// Depedency Management
@@ -249,7 +285,7 @@ var Component = (function (_yeoman$generators$Base) {
 			this.context.componentNamePascalCase = (0, _jargon2["default"])(this.context.name).pascal.toString();
 
 			try {
-				var f = _fs2["default"].statSync(this.destinationPath("es6/lib"));
+				_fs2["default"].statSync(this.destinationPath("es6/lib"));
 			} catch (e) {
 				this[copyFilesIf](["es6/lib/_##componentName##.js", "es6/spec/_##componentName##.spec.js"]);
 			}
@@ -264,7 +300,7 @@ var Component = (function (_yeoman$generators$Base) {
 			});
 
 			// copy files
-			this[copyFilesIf](["_.eslintrc", "_.gitignore", "_.jshintrc", "_.karma.conf.js", "_LICENSE", "_gulpfile.babel.js", "_index.js", "_paths.json", "_.editorconfig", "tasks/_build.js", "tasks/_build-lib.js", "tasks/_build-spec.js", "tasks/_test-local.js", "tasks/_test-browsers.js", "tasks/_test.js"]);
+			this[copyFilesIf](["_.eslintrc", "_.gitignore", "_.jshintrc", "_.karma.conf.js", "_LICENSE", "_gulpfile.babel.js", "_index.js", "_paths.json", "_.editorconfig", "tasks/_build.js", "tasks/_build-lib.js", "tasks/_build-lib-assets.js", "tasks/_build-spec.js", "tasks/_build-spec-assets.js", "tasks/_test-local.js", "tasks/_test-browsers.js", "tasks/_test.js"]);
 
 			if (this.answers.floobits) {
 				this[copyFilesIf](["_.floo", "_.flooignore"]);
@@ -289,9 +325,25 @@ var Component = (function (_yeoman$generators$Base) {
 					encoding: "utf8"
 				});
 				if (result.error) {
-					process.stdout.write("\nWARNING: TRAVIS ENCRYPT ERROR \n", result.error);
+					process.stdout.write("\nWARNING: TRAVIS SAUCELAB ENCRYPT ERROR \n", result.error);
 				} else if (result.stderr) {
-					process.stdout.write("\nWARNING: TRAVIS ENCRYPT COMMAND ERROR (maybe repo not found at " + this.answers.gitHubAccountName + "/" + this.answers.name + "?) \n");
+					process.stdout.write("\nWARNING: TRAVIS SAUCELAB ENCRYPT COMMAND ERROR (maybe repo not found at " + this.answers.gitHubAccountName + "/" + this.answers.name + "?) \n");
+				}
+			}
+
+			if (this.answers.npmPublish) {
+				//encrypt with travis
+				//echo -u "fam:5vDL1CJGXykkL5XNiEfLAxWM" | base64 | ./node_modules/travis-encrypt/bin/travis-encrypt-cli.js --add deploy.api_key -r FreeAllMedia/generator-oss-component LXUgZmFtOjV2REwxQ0pHWHlra0w1WE5pRWZMQXhXTQo=
+				var apiKey = new Buffer("" + this.answers.npmUserName + ":" + this.answers.npmPassword).toString("base64");
+
+				var result = _child_process2["default"].spawnSync("node", ["" + __dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-a", "deploy.api_key", "-r", "" + this.answers.gitHubAccountName + "/" + this.answers.name, "" + apiKey], {
+					cwd: "" + this.destinationRoot(),
+					encoding: "utf8"
+				});
+				if (result.error) {
+					process.stdout.write("\nWARNING: TRAVIS ENCRYPT NPM ERROR \n", result.error);
+				} else if (result.stderr) {
+					process.stdout.write("\nWARNING: TRAVIS ENCRYPT NPM COMMAND ERROR (maybe repo not found at " + this.answers.gitHubAccountName + "/" + this.answers.name + "?) \n");
 				}
 			}
 

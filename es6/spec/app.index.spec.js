@@ -32,6 +32,10 @@ describe("oss-component generator", function() {
 				"homepage": "someHomepageanswer",
 
 				"travis": true,
+				"npmPublish": true,
+				"npmEmail": "somenpmmail",
+				"npmUserName": "somenpmuser",
+				"npmPassword": "somenpmpassword",
 
 				"floobits": true,
 				"floobitsWorkspace": "floobits.com/someFlooobitsWorkspace",
@@ -333,7 +337,9 @@ describe("oss-component generator", function() {
 				assert.file([`gulpfile.babel.js`,
 					`tasks/build.js`,
 					`tasks/build-lib.js`,
+					`tasks/build-lib-assets.js`,
 					`tasks/build-spec.js`,
+					`tasks/build-spec-assets.js`,
 					`tasks/test.js`,
 					`tasks/test-local.js`,
 					`tasks/test-browsers.js`,
