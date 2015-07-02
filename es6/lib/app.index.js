@@ -143,7 +143,7 @@ export default class Component extends yeoman.generators.Base {
 							{
 								type: "input",
 								name: "sauceLabsAccessToken",
-								message: "Paste here the access token for Sauce Labs (we will encrypt it for you, too)",
+								message: "Paste here the access key for Sauce Labs (we will encrypt it for you, too)",
 								default: ``
 							}
 						], () => {
@@ -183,6 +183,48 @@ export default class Component extends yeoman.generators.Base {
 				], () => {
 					promptComplete();
 				});
+			},
+			//npm publish
+			(promptComplete) => {
+				if (this.answers.travis) {
+					ask([
+						{
+							type: "confirm",
+							name: "npmPublish",
+							message: "Do you want this component to be published to npm on your behalf after a succesful build on travis?",
+							default: false
+						}
+					], () => {
+						if (this.answers.npmPublish) {
+							ask([
+								{
+									type: "input",
+									name: "npmEmail",
+									message: "Please provide the email for Npm (we will add it to the travis yaml for you onto the deploy section)",
+									default: ""
+								},
+								{
+									type: "input",
+									name: "npmUserName",
+									message: "Please provide the user name for Npm (yeah, we will encrypt it into the travis yaml for you)",
+									default: ""
+								},
+								{
+									type: "input",
+									name: "npmPassword",
+									message: "Provide the npm password (encrypted as well, with this and the username we create the api key that gets encrypted to the YAML)",
+									default: ""
+								}
+							], () => {
+								promptComplete();
+							});
+						} else {
+							promptComplete();
+						}
+					});
+				} else {
+					promptComplete();
+				}
 			},
 
 			// Depedency Management
@@ -228,7 +270,7 @@ export default class Component extends yeoman.generators.Base {
 		this.context.componentNamePascalCase = inflect(this.context.name).pascal.toString();
 
 		try {
-			let f = fs.statSync(this.destinationPath("es6/lib"));
+			fs.statSync(this.destinationPath("es6/lib"));
 		} catch(e) {
 			this[copyFilesIf](["es6/lib/_##componentName##.js",
 				"es6/spec/_##componentName##.spec.js"]
@@ -291,9 +333,29 @@ export default class Component extends yeoman.generators.Base {
 				}
 			);
 			if(result.error) {
-				process.stdout.write("\nWARNING: TRAVIS ENCRYPT ERROR \n", result.error);
+				process.stdout.write("\nWARNING: TRAVIS SAUCELAB ENCRYPT ERROR \n", result.error);
 			} else if (result.stderr) {
-				process.stdout.write(`\nWARNING: TRAVIS ENCRYPT COMMAND ERROR (maybe repo not found at ${this.answers.gitHubAccountName}/${this.answers.name}?) \n`);
+				process.stdout.write(`\nWARNING: TRAVIS SAUCELAB ENCRYPT COMMAND ERROR (maybe repo not found at ${this.answers.gitHubAccountName}/${this.answers.name}?) \n`);
+			}
+		}
+
+		if(this.answers.npmPublish) {
+			//encrypt with travis
+			//echo -u "fam:5vDL1CJGXykkL5XNiEfLAxWM" | base64 | ./node_modules/travis-encrypt/bin/travis-encrypt-cli.js --add deploy.api_key -r FreeAllMedia/generator-oss-component LXUgZmFtOjV2REwxQ0pHWHlra0w1WE5pRWZMQXhXTQo=
+			const apiKey = new Buffer(`${this.answers.npmUserName}:${this.answers.npmPassword}`).toString("base64");
+
+			const result = childProcess.spawnSync(
+				"node",
+				[`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-a`, "deploy.api_key", `-r`, `${this.answers.gitHubAccountName}/${this.answers.name}`, `${apiKey}`],
+				{
+					cwd: `${this.destinationRoot()}`,
+					encoding: "utf8"
+				}
+			);
+			if(result.error) {
+				process.stdout.write("\nWARNING: TRAVIS ENCRYPT NPM ERROR \n", result.error);
+			} else if (result.stderr) {
+				process.stdout.write(`\nWARNING: TRAVIS ENCRYPT NPM COMMAND ERROR (maybe repo not found at ${this.answers.gitHubAccountName}/${this.answers.name}?) \n`);
 			}
 		}
 
@@ -318,10 +380,10 @@ export default class Component extends yeoman.generators.Base {
 
 	[installAndTest]() {
 		this.installDependencies({
-			skipInstall: this.options['skip-install'],
+			skipInstall: this.options["skip-install"],
 			callback: function callbackInstallDependencies() {
 				//gulp test execution if there is a local gulp there already
-				if(!this.options['skip-install']) {
+				if(!this.options["skip-install"]) {
 					this.spawnCommand("gulp", ["test"]);
 				}
 			}.bind(this)
