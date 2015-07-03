@@ -18,7 +18,7 @@ This yeoman generator will prompt you the following questions:
 * There is a Floobits workspace for this repo (Development Real-time Collaboration)?
 * do you want to add SauceLabs (Cross Browser Testing)?
 * do you want to add Travis (Continuous Integration) support?
-* do you want to add Code Climate (Code Quality) support?
+* do you want to add Code Quality support (choose none, Code Climate or bithound)?
 * do you want to add David (Dependency Management) support?
 
 # Usage
