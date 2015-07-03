@@ -333,9 +333,9 @@ export default class Component extends yeoman.generators.Base {
 				}
 			);
 			if(result.error) {
-				process.stdout.write("\nWARNING: TRAVIS SAUCELAB ENCRYPT ERROR \n", result.error);
+				this.log("\nWARNING: TRAVIS SAUCELAB ENCRYPT ERROR \n", result.error);
 			} else if (result.stderr) {
-				process.stdout.write(`\nWARNING: TRAVIS SAUCELAB ENCRYPT COMMAND ERROR (maybe repo not found at ${this.answers.gitHubAccountName}/${this.answers.name}?) \n`);
+				this.log(`\nWARNING: TRAVIS SAUCELAB ENCRYPT COMMAND ERROR (maybe repo not found at ${this.answers.gitHubAccountName}/${this.answers.name}?) \n`);
 			}
 		}
 
@@ -343,7 +343,7 @@ export default class Component extends yeoman.generators.Base {
 			//encrypt with travis
 			//echo -u "fam:5vDL1CJGXykkL5XNiEfLAxWM" | base64 | ./node_modules/travis-encrypt/bin/travis-encrypt-cli.js --add deploy.api_key -r FreeAllMedia/generator-oss-component LXUgZmFtOjV2REwxQ0pHWHlra0w1WE5pRWZMQXhXTQo=
 			const apiKey = new Buffer(`${this.answers.npmUserName}:${this.answers.npmPassword}`).toString("base64");
-
+			this.log(`Executing travis encryption for the travis slug ${this.answers.gitHubAccountName}/${this.answers.name} with api key ${apiKey}`);
 			const result = childProcess.spawnSync(
 				"node",
 				[`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-a`, "deploy.api_key", `-r`, `${this.answers.gitHubAccountName}/${this.answers.name}`, `${apiKey}`],
@@ -352,10 +352,11 @@ export default class Component extends yeoman.generators.Base {
 					encoding: "utf8"
 				}
 			);
+
 			if(result.error) {
-				process.stdout.write("\nWARNING: TRAVIS ENCRYPT NPM ERROR \n", result.error);
+				this.log("\nWARNING: TRAVIS ENCRYPT NPM ERROR \n", result.error);
 			} else if (result.stderr) {
-				process.stdout.write(`\nWARNING: TRAVIS ENCRYPT NPM COMMAND ERROR (maybe repo not found at ${this.answers.gitHubAccountName}/${this.answers.name}?) \n`);
+				this.log(`\nWARNING: TRAVIS ENCRYPT NPM COMMAND ERROR (maybe repo not found at ${this.answers.gitHubAccountName}/${this.answers.name}?) \n`);
 			}
 		}
 
