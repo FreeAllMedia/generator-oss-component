@@ -47,7 +47,7 @@ describe("oss-component generator", function() {
 				"david": true,
 				"davidRepo": "david-dm.org/somerepo",
 
-				"codeClimate": true,
+				"codeQuality": "codeClimate",
 
 				"gitHub": true,
 				"gitHubAccountName": "FreeAllMedia"
@@ -69,7 +69,7 @@ describe("oss-component generator", function() {
 
 				"david": false,
 
-				"codeClimate": false,
+				"codeQuality": "none",
 
 				"gitHub": false
 			}
@@ -214,8 +214,8 @@ describe("oss-component generator", function() {
 			});
 
 			describe("(codeclimate)", () => {
-				it("should set codeClimate correctly", () => {
-					context.generator.context.codeClimate.should.equal(answers.true.codeClimate);
+				it("should set codeQuality correctly", () => {
+					context.generator.context.codeQuality.should.equal(answers.true.codeQuality);
 				});
 			});
 
