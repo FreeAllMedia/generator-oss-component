@@ -184,12 +184,13 @@ var Component = (function (_yeoman$generators$Base) {
 
 			// Code Quality Testing
 			function (promptComplete) {
-				_this.log("Code Quality Testing:");
+				_this.log("Code Quality Provider:");
 				ask([{
-					type: "confirm",
-					name: "codeClimate",
-					message: "Do you want this component to integrate with CodeClimte?",
-					"default": false
+					type: "list",
+					name: "codeQuality",
+					choices: [{ name: "Code Climate", value: "codeClimate" }, "bithound", "none"],
+					message: "Pick one of the available code quality providers or none.",
+					"default": "none"
 				}], function () {
 					promptComplete();
 				});

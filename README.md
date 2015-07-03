@@ -3,6 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/generator-oss-component.svg)](https://www.npmjs.com/package/generator-oss-component) [![npm downloads](https://img.shields.io/npm/dm/generator-oss-component.svg)](https://www.npmjs.com/package/generator-oss-component)
 
 [![Build Status](https://travis-ci.org/FreeAllMedia/generator-oss-component.png?branch=master)](https://travis-ci.org/FreeAllMedia/generator-oss-component) [![Coverage Status](https://coveralls.io/repos/FreeAllMedia/generator-oss-component/badge.svg)](https://coveralls.io/r/FreeAllMedia/generator-oss-component) [![Code Climate](https://codeclimate.com/repos/557bdf9e695680585b007d4e/badges/536e157dec354dc8c8fd/gpa.svg)](https://codeclimate.com/repos/557bdf9e695680585b007d4e/feed)
+[![bitHound Score](https://www.bithound.io/github/FreeAllMedia/generator-oss-component/badges/score.svg)](https://www.bithound.io/github/FreeAllMedia/generator-oss-component)
 
 [![Dependency Status](https://david-dm.org/FreeAllMedia/generator-oss-component.png?theme=shields.io)](https://david-dm.org/FreeAllMedia/generator-oss-component?theme=shields.io) [![Dev Dependency Status](https://david-dm.org/FreeAllMedia/generator-oss-component/dev-status.svg)](https://david-dm.org/FreeAllMedia/generator-oss-component?theme=shields.io#info=devDependencies)
 
@@ -17,7 +18,7 @@ This yeoman generator will prompt you the following questions:
 * There is a Floobits workspace for this repo (Development Real-time Collaboration)?
 * do you want to add SauceLabs (Cross Browser Testing)?
 * do you want to add Travis (Continuous Integration) support?
-* do you want to add Code Climate (Code Quality) support?
+* do you want to add Code Quality support (choose none, Code Climate or bithound)?
 * do you want to add David (Dependency Management) support?
 
 # Usage
