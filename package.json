@@ -49,7 +49,7 @@
     "mocha": "^2.2.5",
     "rimraf": "^2.4.0",
     "sinon": "^1.15.3",
-    "coveralls": "^2.11.2",
+    "coveralls": "^2.11.2"
   },
   "dependencies": {
     "babel": "^5.5.8",
