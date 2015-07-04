@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -45,7 +43,9 @@ var Component = (function (_yeoman$generators$Base) {
 	function Component() {
 		_classCallCheck(this, Component);
 
-		_get(Object.getPrototypeOf(Component.prototype), "constructor", this).apply(this, arguments);
+		if (_yeoman$generators$Base != null) {
+			_yeoman$generators$Base.apply(this, arguments);
+		}
 	}
 
 	_inherits(Component, _yeoman$generators$Base);
@@ -321,7 +321,7 @@ var Component = (function (_yeoman$generators$Base) {
 
 			//generate travis crypted environment vars and append to the travis YAML
 			if (this.answers.sauceLabs) {
-				var result = _child_process2["default"].spawnSync("node", [__dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-ar", this.answers.gitHubAccountName + "/" + this.answers.name, "SAUCE_USERNAME=" + this.answers.sauceLabsUserName, "SAUCE_ACCESS_KEY=" + this.answers.sauceLabsAccessToken], {
+				var result = _child_process2["default"].spawnSync("node", ["" + __dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-ar", "" + this.answers.gitHubAccountName + "/" + this.answers.name, "SAUCE_USERNAME=" + this.answers.sauceLabsUserName, "SAUCE_ACCESS_KEY=" + this.answers.sauceLabsAccessToken], {
 					cwd: "" + this.destinationRoot(),
 					encoding: "utf8"
 				});
@@ -335,9 +335,9 @@ var Component = (function (_yeoman$generators$Base) {
 			if (this.answers.npmPublish) {
 				//encrypt with travis
 				//echo -u "fam:5vDL1CJGXykkL5XNiEfLAxWM" | base64 | ./node_modules/travis-encrypt/bin/travis-encrypt-cli.js --add deploy.api_key -r FreeAllMedia/generator-oss-component LXUgZmFtOjV2REwxQ0pHWHlra0w1WE5pRWZMQXhXTQo=
-				var apiKey = new Buffer(this.answers.npmUserName + ":" + this.answers.npmPassword).toString("base64");
+				var apiKey = new Buffer("" + this.answers.npmUserName + ":" + this.answers.npmPassword).toString("base64");
 				this.log("Executing travis encryption for the travis slug " + this.answers.gitHubAccountName + "/" + this.answers.name + " with api key " + apiKey);
-				var result = _child_process2["default"].spawnSync("node", [__dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-a", "deploy.api_key", "-r", this.answers.gitHubAccountName + "/" + this.answers.name, "" + apiKey], {
+				var result = _child_process2["default"].spawnSync("node", ["" + __dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-a", "deploy.api_key", "-r", "" + this.answers.gitHubAccountName + "/" + this.answers.name, "" + apiKey], {
 					cwd: "" + this.destinationRoot(),
 					encoding: "utf8"
 				});
@@ -356,7 +356,7 @@ var Component = (function (_yeoman$generators$Base) {
 
 		//PRIVATE METHODS
 
-		value: function value(files) {
+		value: function (files) {
 			var _this2 = this;
 
 			var predicate = arguments[1] === undefined ? function () {
@@ -373,7 +373,7 @@ var Component = (function (_yeoman$generators$Base) {
 		}
 	}, {
 		key: installAndTest,
-		value: function value() {
+		value: function () {
 			this.installDependencies({
 				skipInstall: this.options["skip-install"],
 				callback: (function callbackInstallDependencies() {
