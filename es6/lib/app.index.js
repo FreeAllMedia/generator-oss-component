@@ -206,14 +206,8 @@ export default class Component extends yeoman.generators.Base {
 								},
 								{
 									type: "input",
-									name: "npmUserName",
-									message: "Please provide the user name for Npm (yeah, we will encrypt it into the travis yaml for you)",
-									default: ""
-								},
-								{
-									type: "input",
-									name: "npmPassword",
-									message: "Provide the npm password (encrypted as well, with this and the username we create the api key that gets encrypted to the YAML)",
+									name: "npmApiKey",
+									message: "Please provide the Npm api key. You can get it wih more ~/.npmrc (remember to execute npm config if it's empty)",
 									default: ""
 								}
 							], () => {
@@ -343,7 +337,7 @@ export default class Component extends yeoman.generators.Base {
 		if(this.answers.npmPublish) {
 			//encrypt with travis
 			//echo -u "fam:5vDL1CJGXykkL5XNiEfLAxWM" | base64 | ./node_modules/travis-encrypt/bin/travis-encrypt-cli.js --add deploy.api_key -r FreeAllMedia/generator-oss-component LXUgZmFtOjV2REwxQ0pHWHlra0w1WE5pRWZMQXhXTQo=
-			const apiKey = new Buffer(`${this.answers.npmUserName}:${this.answers.npmPassword}`).toString("base64");
+			const apiKey = new Buffer(`${this.answers.npmApiKey}`).toString("base64");
 			this.log(`Executing travis encryption for the travis slug ${this.answers.gitHubAccountName}/${this.answers.name} with api key ${apiKey}`);
 			const result = childProcess.spawnSync(
 				"node",
