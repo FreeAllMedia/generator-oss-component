@@ -209,41 +209,41 @@ var Component = (function (_yeoman$generators$Base) {
 				});
 			},
 			//npm publish
-			function (promptComplete) {
-				if (_this.answers.travis) {
-					ask([{
-						type: "confirm",
-						name: "npmPublish",
-						message: "Do you want this component to be published to npm on your behalf after a succesful build on travis?",
-						"default": false
-					}], function () {
-						if (_this.answers.npmPublish) {
-							ask([{
-								type: "input",
-								name: "npmEmail",
-								message: "Please provide the email for Npm (we will add it to the travis yaml for you onto the deploy section)",
-								"default": ""
-							}, {
-								type: "input",
-								name: "npmUserName",
-								message: "Please provide the user name for Npm (yeah, we will encrypt it into the travis yaml for you)",
-								"default": ""
-							}, {
-								type: "input",
-								name: "npmPassword",
-								message: "Provide the npm password (encrypted as well, with this and the username we create the api key that gets encrypted to the YAML)",
-								"default": ""
-							}], function () {
-								promptComplete();
-							});
-						} else {
-							promptComplete();
-						}
-					});
-				} else {
-					promptComplete();
-				}
-			},
+			// (promptComplete) => {
+			// 	if (this.answers.travis) {
+			// 		ask([
+			// 			{
+			// 				type: "confirm",
+			// 				name: "npmPublish",
+			// 				message: "Do you want this component to be published to npm on your behalf after a succesful build on travis?",
+			// 				default: false
+			// 			}
+			// 		], () => {
+			// 			if (this.answers.npmPublish) {
+			// 				ask([
+			// 					{
+			// 						type: "input",
+			// 						name: "npmEmail",
+			// 						message: "Please provide the email for Npm (we will add it to the travis yaml for you onto the deploy section)",
+			// 						default: ""
+			// 					},
+			// 					{
+			// 						type: "input",
+			// 						name: "npmApiKey",
+			// 						message: "Please provide the Npm api key. You can get it wih more ~/.npmrc (remember to execute npm config if it's empty)",
+			// 						default: ""
+			// 					}
+			// 				], () => {
+			// 					promptComplete();
+			// 				});
+			// 			} else {
+			// 				promptComplete();
+			// 			}
+			// 		});
+			// 	} else {
+			// 		promptComplete();
+			// 	}
+			// },
 
 			// Depedency Management
 			function (promptComplete) {
@@ -332,22 +332,28 @@ var Component = (function (_yeoman$generators$Base) {
 				}
 			}
 
-			if (this.answers.npmPublish) {
-				//encrypt with travis
-				//echo -u "fam:5vDL1CJGXykkL5XNiEfLAxWM" | base64 | ./node_modules/travis-encrypt/bin/travis-encrypt-cli.js --add deploy.api_key -r FreeAllMedia/generator-oss-component LXUgZmFtOjV2REwxQ0pHWHlra0w1WE5pRWZMQXhXTQo=
-				var apiKey = new Buffer(this.answers.npmUserName + ":" + this.answers.npmPassword).toString("base64");
-				this.log("Executing travis encryption for the travis slug " + this.answers.gitHubAccountName + "/" + this.answers.name + " with api key " + apiKey);
-				var result = _child_process2["default"].spawnSync("node", [__dirname + "/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js", "-a", "deploy.api_key", "-r", this.answers.gitHubAccountName + "/" + this.answers.name, "" + apiKey], {
-					cwd: "" + this.destinationRoot(),
-					encoding: "utf8"
-				});
-
-				if (result.error) {
-					this.log("\nWARNING: TRAVIS ENCRYPT NPM ERROR \n", result.error);
-				} else if (result.stderr) {
-					this.log("\nWARNING: TRAVIS ENCRYPT NPM COMMAND ERROR (maybe repo not found at " + this.answers.gitHubAccountName + "/" + this.answers.name + "?) \n");
-				}
-			}
+			// if(this.answers.npmPublish) {
+			// 	//encrypt with travis
+			// 	//echo -u "fam:5vDL1CJGXykkL5XNiEfLAxWM" | base64 | ./node_modules/travis-encrypt/bin/travis-encrypt-cli.js --add deploy.api_key -r FreeAllMedia/generator-oss-component LXUgZmFtOjV2REwxQ0pHWHlra0w1WE5pRWZMQXhXTQo=
+			// 	const apiKey = new Buffer(`${this.answers.npmUserName}:${this.answers.npmPassword}`).toString("base64"); //changed by npm
+			// 	this.log(`Executing travis encryption for the travis slug ${this.answers.gitHubAccountName}/${this.answers.name} with api key ${apiKey}`);
+			// 	const result = childProcess.spawnSync(
+			// 		"node",
+			// 		[`${__dirname}/../../node_modules/travis-encrypt/bin/travis-encrypt-cli.js`, `-a`, "deploy.api_key", `-r`, `${this.answers.gitHubAccountName}/${this.answers.name}`, `${apiKey}`],
+			// 		{
+			// 			cwd: `${this.destinationRoot()}`,
+			// 			encoding: "utf8"
+			// 		}
+			// 	);
+			//
+			// 	if(result.error) {
+			// 		this.log("\nWARNING: TRAVIS SETUP NPM ERROR \n", result.error);
+			// 	} else if (result.stderr) {
+			// 		this.log(`\nWARNING: TRAVIS SETUP NPM COMMAND ERROR\n`);
+			// 	} else {
+			// 		this.log("\nCommand result is: ", result);
+			// 	}
+			// }
 
 			this[installAndTest]();
 		}

@@ -61,6 +61,11 @@ git push origin master
 // and then run... (so it generates the travis keys for you)
 
 yo oss-component
+
+//... answer questions and wait for it to finish
+
+//... if you want to autopublish your module (https://github.com/travis-ci/travis.rb#installation)
+travis setup npm
 ```
 
 # Contributing
