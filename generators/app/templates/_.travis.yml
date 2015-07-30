@@ -10,8 +10,3 @@ before_script:
 - npm install
 after_success:
   - ./node_modules/coveralls/bin/coveralls.js < ./lcov.info
-<% if (npmPublish) { %>
-deploy:
-  provider: npm
-  email: "<%= npmEmail %>"
-<% } %>
