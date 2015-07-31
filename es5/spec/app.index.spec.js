@@ -20,25 +20,21 @@ var _rimraf = require("rimraf");
 
 var _rimraf2 = _interopRequireDefault(_rimraf);
 
-var _nock = require("nock");
+var _chai = require("chai");
 
-var _nock2 = _interopRequireDefault(_nock);
+var _chai2 = _interopRequireDefault(_chai);
 
-_nock2["default"].disableNetConnect();
-//nock.recorder.rec();
+_chai2["default"].should();
 
 var basePath = _path2["default"].join(_os2["default"].tmpdir(), "/temp-test");
 
 describe("oss-component generator", function () {
 	var context = undefined,
-	    answers = undefined,
-	    nockScope = undefined;
+	    answers = undefined;
 
 	this.timeout(10000); // Yeoman generation can sometimes take longer than 2 seconds. Let's give it 10.
 
 	before(function () {
-		nockScope = (0, _nock2["default"])("https://api.github.com:443");
-
 		answers = {
 			"true": {
 				"name": "jargon",
@@ -50,9 +46,6 @@ describe("oss-component generator", function () {
 				"homepage": "someHomepageanswer",
 
 				"travis": true,
-				"npmPublish": true,
-				"npmEmail": "somenpmmail",
-				"npmApiKey": "someapikey",
 
 				"floobits": true,
 				"floobitsWorkspace": "floobits.com/someFlooobitsWorkspace",
@@ -104,6 +97,7 @@ describe("oss-component generator", function () {
 
 		describe("(general information)", function () {
 			it("should set name property correctly", function () {
+				console.log("context is ", context.generator.context);
 				context.generator.context.name.should.equal(answers["false"].name);
 			});
 

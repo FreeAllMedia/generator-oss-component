@@ -3,24 +3,19 @@ import {assert, test as helpers} from "yeoman-generator";
 import os from "os";
 import fs from "fs";
 import rimraf from "rimraf";
-import nock from "nock";
+import chai from "chai";
 
-nock.disableNetConnect();
-//nock.recorder.rec();
+chai.should();
 
 const basePath = path.join(os.tmpdir(), "/temp-test");
 
 describe("oss-component generator", function() {
 	let context,
-		answers,
-		nockScope;
+		answers;
 
 	this.timeout(10000); // Yeoman generation can sometimes take longer than 2 seconds. Let's give it 10.
 
 	before(() => {
-		nockScope = nock("https://api.github.com:443");
-
-
 		answers = {
 			"true": {
 				"name": "jargon",
@@ -32,9 +27,6 @@ describe("oss-component generator", function() {
 				"homepage": "someHomepageanswer",
 
 				"travis": true,
-				"npmPublish": true,
-				"npmEmail": "somenpmmail",
-				"npmApiKey": "someapikey",
 
 				"floobits": true,
 				"floobitsWorkspace": "floobits.com/someFlooobitsWorkspace",
