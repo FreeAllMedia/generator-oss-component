@@ -1,10 +1,7 @@
 import gulp from "gulp";
-import mocha from "gulp-mocha";
+import mocha from "gulp-spawn-mocha";
 import istanbul from "gulp-istanbul";
 import paths from "../paths.json";
-
-import chai from "chai";
-chai.should(); // This enables should-style syntax
 
 gulp.task("test-local", ["build"], (cb) => {
   gulp.src(paths.build.lib)
