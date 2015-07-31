@@ -339,6 +339,8 @@ describe("oss-component generator", function() {
 					`tasks/build-spec-assets.js`,
 					`tasks/test.js`,
 					`tasks/test-local.js`,
+					`tasks/test-watch.js`,
+					`tasks/suppress-errors.js`,
 					`tasks/test-browsers.js`,
 					`paths.json`
 				]);

@@ -302,6 +302,8 @@ export default class Component extends yeoman.generators.Base {
 			"tasks/_build-lib-assets.js",
 			"tasks/_build-spec.js",
 			"tasks/_build-spec-assets.js",
+			"tasks/_suppress-errors.js",
+			"tasks/_test-watch.js",
 			"tasks/_test-local.js",
 			"tasks/_test-browsers.js",
 			"tasks/_test.js"]
