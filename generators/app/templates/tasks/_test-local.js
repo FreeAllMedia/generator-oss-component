@@ -1,5 +1,5 @@
 import gulp from "gulp";
-import mocha from "gulp-mocha";
+import mocha from "gulp-spawn-mocha";
 import istanbul from "gulp-istanbul";
 import paths from "../paths.json";
 
