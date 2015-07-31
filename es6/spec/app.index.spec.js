@@ -82,7 +82,6 @@ describe("oss-component generator", function() {
 
 		describe("(general information)", () => {
 			it("should set name property correctly", () => {
-				console.log("context is ", context.generator.context);
 				context.generator.context.name.should.equal(answers.false.name);
 			});
 
