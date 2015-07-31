@@ -57,7 +57,8 @@ describe("oss-component generator", function () {
 				"david": true,
 				"davidRepo": "david-dm.org/somerepo",
 
-				"codeQuality": "codeClimate",
+				"codeClimate": true,
+				"bithound": true,
 
 				"gitHub": true,
 				"gitHubAccountName": "FreeAllMedia"
@@ -79,7 +80,8 @@ describe("oss-component generator", function () {
 
 				"david": false,
 
-				"codeQuality": "none",
+				"codeClimate": false,
+				"bithound": false,
 
 				"gitHub": false
 			}
@@ -97,7 +99,6 @@ describe("oss-component generator", function () {
 
 		describe("(general information)", function () {
 			it("should set name property correctly", function () {
-				console.log("context is ", context.generator.context);
 				context.generator.context.name.should.equal(answers["false"].name);
 			});
 
@@ -140,7 +141,7 @@ describe("oss-component generator", function () {
 					_yeomanGenerator.assert.noFile([".floo", ".flooignore"]);
 				});
 
-				it("should not add nothing with codeclimate to the readme.md", function () {
+				it("should not add nothing with floobits to the readme.md", function () {
 					_yeomanGenerator.assert.noFileContent("README.md", /floobits\.com/);
 				});
 			});
@@ -151,7 +152,7 @@ describe("oss-component generator", function () {
 				_yeomanGenerator.assert.noFile([".sauce.json"]);
 			});
 
-			it("should not add nothing with codeclimate to the readme.md", function () {
+			it("should not add nothing with saucelabs.com to the readme.md", function () {
 				_yeomanGenerator.assert.noFileContent("README.md", /saucelabs\.com/);
 			});
 		});
@@ -161,7 +162,7 @@ describe("oss-component generator", function () {
 				_yeomanGenerator.assert.noFile([".travis.yml"]);
 			});
 
-			it("should not add nothing with codeclimate to the readme.md", function () {
+			it("should not add nothing with travis-ci.org to the readme.md", function () {
 				_yeomanGenerator.assert.noFileContent("README.md", /travis-ci\.org/);
 			});
 		});
@@ -217,8 +218,12 @@ describe("oss-component generator", function () {
 			});
 
 			describe("(codeclimate)", function () {
-				it("should set codeQuality correctly", function () {
-					context.generator.context.codeQuality.should.equal(answers["true"].codeQuality);
+				it("should set code climate correctly", function () {
+					context.generator.context.codeClimate.should.equal(answers["true"].codeClimate);
+				});
+
+				it("should set bithound correctly", function () {
+					context.generator.context.bithound.should.equal(answers["true"].bithound);
 				});
 			});
 

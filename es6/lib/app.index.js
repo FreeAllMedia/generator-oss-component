@@ -160,11 +160,16 @@ export default class Component extends yeoman.generators.Base {
 				this.log("Code Quality Provider:");
 				ask([
 					{
-						type: "list",
-						name: "codeQuality",
-						choices: [{name: "Code Climate", value: "codeClimate"}, "bithound", "none"],
-						message: "Pick one of the available code quality providers or none.",
-						default: "none"
+						type: "confirm",
+						name: "codeClimate",
+						message: "Do you use Code Climate?",
+						default: false
+					},
+					{
+						type: "confirm",
+						name: "bithound",
+						message: "Do you use bithound?",
+						default: false
 					}
 				], () => {
 					promptComplete();

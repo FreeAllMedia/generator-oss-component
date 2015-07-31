@@ -38,7 +38,8 @@ describe("oss-component generator", function() {
 				"david": true,
 				"davidRepo": "david-dm.org/somerepo",
 
-				"codeQuality": "codeClimate",
+				"codeClimate": true,
+				"bithound": true,
 
 				"gitHub": true,
 				"gitHubAccountName": "FreeAllMedia"
@@ -60,7 +61,8 @@ describe("oss-component generator", function() {
 
 				"david": false,
 
-				"codeQuality": "none",
+				"codeClimate": false,
+				"bithound": false,
 
 				"gitHub": false
 			}
@@ -124,7 +126,7 @@ describe("oss-component generator", function() {
 					assert.noFile([`.floo`, `.flooignore`]);
 				});
 
-				it("should not add nothing with codeclimate to the readme.md", () => {
+				it("should not add nothing with floobits to the readme.md", () => {
 					assert.noFileContent("README.md", /floobits\.com/);
 				});
 			});
@@ -135,7 +137,7 @@ describe("oss-component generator", function() {
 				assert.noFile([`.sauce.json`]);
 			});
 
-			it("should not add nothing with codeclimate to the readme.md", () => {
+			it("should not add nothing with saucelabs.com to the readme.md", () => {
 				assert.noFileContent("README.md", /saucelabs\.com/);
 			});
 		});
@@ -145,7 +147,7 @@ describe("oss-component generator", function() {
 				assert.noFile([`.travis.yml`]);
 			});
 
-			it("should not add nothing with codeclimate to the readme.md", () => {
+			it("should not add nothing with travis-ci.org to the readme.md", () => {
 				assert.noFileContent("README.md", /travis-ci\.org/);
 			});
 		});
@@ -205,8 +207,12 @@ describe("oss-component generator", function() {
 			});
 
 			describe("(codeclimate)", () => {
-				it("should set codeQuality correctly", () => {
-					context.generator.context.codeQuality.should.equal(answers.true.codeQuality);
+				it("should set code climate correctly", () => {
+					context.generator.context.codeClimate.should.equal(answers.true.codeClimate);
+				});
+
+				it("should set bithound correctly", () => {
+					context.generator.context.bithound.should.equal(answers.true.bithound);
 				});
 			});
 
