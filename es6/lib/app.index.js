@@ -281,6 +281,11 @@ export default class Component extends yeoman.generators.Base {
 		this[copyFilesIf](["_README.md"], (destination) => {
 				try {
 					fs.statSync(destination);
+					//so we update the version is the package json file already exists
+					const newPkgPath = this.destinationPath("package.json");
+					let newPkg = require(newPkgPath);
+					newPkg.generatorVersion = this.pkg.version;
+					fs.writeFileSync(newPkgPath, JSON.stringify(newPkg));
 					return false;
 				} catch(e) {
 					return true;
