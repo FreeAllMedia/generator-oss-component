@@ -102,6 +102,10 @@ describe("oss-component generator", function () {
 				context.generator.context.name.should.equal(answers["false"].name);
 			});
 
+			it("should set generatorVersion property correctly", function () {
+				context.generator.context.generatorVersion.should.equal(require("../../package.json").version);
+			});
+
 			it("should set description property correctly", function () {
 				context.generator.context.description.should.equal(answers["false"].description);
 			});

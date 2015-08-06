@@ -286,6 +286,7 @@ var Component = (function (_yeoman$generators$Base) {
 			for (var propertyName in this.answers) {
 				this.context[propertyName] = this.answers[propertyName];
 			}
+			this.context.generatorVersion = this.pkg.version;
 
 			this.context.componentNamePascalCase = (0, _jargon2["default"])(this.context.name).pascal.toString();
 
