@@ -160,11 +160,16 @@ export default class Component extends yeoman.generators.Base {
 				this.log("Code Quality Provider:");
 				ask([
 					{
-						type: "list",
-						name: "codeQuality",
-						choices: [{name: "Code Climate", value: "codeClimate"}, "bithound", "none"],
-						message: "Pick one of the available code quality providers or none.",
-						default: "none"
+						type: "confirm",
+						name: "codeClimate",
+						message: "Do you use Code Climate?",
+						default: false
+					},
+					{
+						type: "confirm",
+						name: "bithound",
+						message: "Do you use bithound?",
+						default: false
 					}
 				], () => {
 					promptComplete();
@@ -185,7 +190,7 @@ export default class Component extends yeoman.generators.Base {
 					promptComplete();
 				});
 			},
-			//npm publish
+			//npm publish (commented due to changes on the apikey, put it back when the format is known)
 			// (promptComplete) => {
 			// 	if (this.answers.travis) {
 			// 		ask([
@@ -261,6 +266,7 @@ export default class Component extends yeoman.generators.Base {
 		this.context = {};
 
 		for (let propertyName in this.answers) {	this.context[propertyName] = this.answers[propertyName]; }
+		this.context.generatorVersion = this.pkg.version;
 
 		this.context.componentNamePascalCase = inflect(this.context.name).pascal.toString();
 
@@ -297,6 +303,8 @@ export default class Component extends yeoman.generators.Base {
 			"tasks/_build-lib-assets.js",
 			"tasks/_build-spec.js",
 			"tasks/_build-spec-assets.js",
+			"tasks/_suppress-errors.js",
+			"tasks/_test-watch.js",
 			"tasks/_test-local.js",
 			"tasks/_test-browsers.js",
 			"tasks/_test.js"]
@@ -312,6 +320,14 @@ export default class Component extends yeoman.generators.Base {
 
 		if(this.answers.travis) {
 			this[copyFilesIf](["_.travis.yml"]);
+		}
+
+		if(this.answers.bithound) {
+			this[copyFilesIf](["_.bithoundrc"]);
+		}
+
+		if(this.answers.codeClimate) {
+			this[copyFilesIf](["_.codeclimate.yml"]);
 		}
 	}
 

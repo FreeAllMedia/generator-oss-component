@@ -38,7 +38,8 @@ describe("oss-component generator", function() {
 				"david": true,
 				"davidRepo": "david-dm.org/somerepo",
 
-				"codeQuality": "codeClimate",
+				"codeClimate": true,
+				"bithound": true,
 
 				"gitHub": true,
 				"gitHubAccountName": "FreeAllMedia"
@@ -60,7 +61,8 @@ describe("oss-component generator", function() {
 
 				"david": false,
 
-				"codeQuality": "none",
+				"codeClimate": false,
+				"bithound": false,
 
 				"gitHub": false
 			}
@@ -83,6 +85,10 @@ describe("oss-component generator", function() {
 		describe("(general information)", () => {
 			it("should set name property correctly", () => {
 				context.generator.context.name.should.equal(answers.false.name);
+			});
+
+			it("should set generatorVersion property correctly", () => {
+				context.generator.context.generatorVersion.should.equal(require("../../package.json").version);
 			});
 
 			it("should set description property correctly", () => {
@@ -124,7 +130,7 @@ describe("oss-component generator", function() {
 					assert.noFile([`.floo`, `.flooignore`]);
 				});
 
-				it("should not add nothing with codeclimate to the readme.md", () => {
+				it("should not add nothing with floobits to the readme.md", () => {
 					assert.noFileContent("README.md", /floobits\.com/);
 				});
 			});
@@ -135,7 +141,7 @@ describe("oss-component generator", function() {
 				assert.noFile([`.sauce.json`]);
 			});
 
-			it("should not add nothing with codeclimate to the readme.md", () => {
+			it("should not add nothing with saucelabs.com to the readme.md", () => {
 				assert.noFileContent("README.md", /saucelabs\.com/);
 			});
 		});
@@ -145,7 +151,7 @@ describe("oss-component generator", function() {
 				assert.noFile([`.travis.yml`]);
 			});
 
-			it("should not add nothing with codeclimate to the readme.md", () => {
+			it("should not add nothing with travis-ci.org to the readme.md", () => {
 				assert.noFileContent("README.md", /travis-ci\.org/);
 			});
 		});
@@ -205,8 +211,12 @@ describe("oss-component generator", function() {
 			});
 
 			describe("(codeclimate)", () => {
-				it("should set codeQuality correctly", () => {
-					context.generator.context.codeQuality.should.equal(answers.true.codeQuality);
+				it("should set code climate correctly", () => {
+					context.generator.context.codeClimate.should.equal(answers.true.codeClimate);
+				});
+
+				it("should set bithound correctly", () => {
+					context.generator.context.bithound.should.equal(answers.true.bithound);
 				});
 			});
 
@@ -256,6 +266,14 @@ describe("oss-component generator", function() {
 		describe("(code quality)", () => {
 			it("should add code climate to the readme.md", () => {
 				assert.fileContent("README.md", /codeclimate\.com/);
+			});
+
+			it("should add bithound to the readme.md", () => {
+				assert.fileContent("README.md", /bithound\.io/);
+			});
+
+			it("should create files to ignore es5 folder", () => {
+				assert.file([`.bithoundrc`, `.codeclimate.yml`]);
 			});
 
 			describe("(linting)", () => {
@@ -333,6 +351,8 @@ describe("oss-component generator", function() {
 					`tasks/build-spec-assets.js`,
 					`tasks/test.js`,
 					`tasks/test-local.js`,
+					`tasks/test-watch.js`,
+					`tasks/suppress-errors.js`,
 					`tasks/test-browsers.js`,
 					`paths.json`
 				]);
