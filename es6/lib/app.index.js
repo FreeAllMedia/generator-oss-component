@@ -266,6 +266,7 @@ export default class Component extends yeoman.generators.Base {
 		this.context = {};
 
 		for (let propertyName in this.answers) {	this.context[propertyName] = this.answers[propertyName]; }
+		this.context.generatorVersion = this.pkg.version;
 
 		this.context.componentNamePascalCase = inflect(this.context.name).pascal.toString();
 
