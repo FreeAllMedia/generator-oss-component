@@ -190,7 +190,7 @@ export default class Component extends yeoman.generators.Base {
 					promptComplete();
 				});
 			},
-			//npm publish
+			//npm publish (commented due to changes on the apikey, put it back when the format is known)
 			// (promptComplete) => {
 			// 	if (this.answers.travis) {
 			// 		ask([
@@ -320,6 +320,14 @@ export default class Component extends yeoman.generators.Base {
 
 		if(this.answers.travis) {
 			this[copyFilesIf](["_.travis.yml"]);
+		}
+
+		if(this.answers.bithound) {
+			this[copyFilesIf](["_.bithoundrc"]);
+		}
+
+		if(this.answers.codeClimate) {
+			this[copyFilesIf](["_.codeclimate.yml"]);
 		}
 	}
 
