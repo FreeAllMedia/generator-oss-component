@@ -281,6 +281,8 @@ var Component = (function (_yeoman$generators$Base) {
 	}, {
 		key: "writing",
 		value: function writing() {
+			var _this2 = this;
+
 			this.context = {};
 
 			for (var propertyName in this.answers) {
@@ -299,6 +301,11 @@ var Component = (function (_yeoman$generators$Base) {
 			this[copyFilesIf](["_README.md", "_package.json"], function (destination) {
 				try {
 					_fs2["default"].statSync(destination);
+					//so we update the version is the package json file already exists
+					var newPkgPath = _this2.destinationPath("package.json");
+					var newPkg = require(newPkgPath);
+					newPkg.generatorVersion = _this2.pkg.version;
+					_fs2["default"].writeFileSync(newPkgPath, JSON.stringify(newPkg));
 					return false;
 				} catch (e) {
 					return true;
@@ -376,7 +383,7 @@ var Component = (function (_yeoman$generators$Base) {
 		//PRIVATE METHODS
 
 		value: function value(files) {
-			var _this2 = this;
+			var _this3 = this;
 
 			var predicate = arguments[1] === undefined ? function () {
 				return true;
@@ -384,9 +391,9 @@ var Component = (function (_yeoman$generators$Base) {
 
 			files.forEach(function (templatePath) {
 				var newName = templatePath.replace("_", "");
-				newName = newName.replace("##componentName##", _this2.context.name);
-				if (predicate(_this2.destinationPath(newName))) {
-					_this2.fs.copyTpl(_this2.templatePath(templatePath), _this2.destinationPath("" + newName), _this2.context);
+				newName = newName.replace("##componentName##", _this3.context.name);
+				if (predicate(_this3.destinationPath(newName))) {
+					_this3.fs.copyTpl(_this3.templatePath(templatePath), _this3.destinationPath("" + newName), _this3.context);
 				}
 			}, this);
 		}
