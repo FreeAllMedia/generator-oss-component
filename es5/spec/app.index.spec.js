@@ -279,6 +279,14 @@ describe("oss-component generator", function () {
 				_yeomanGenerator.assert.fileContent("README.md", /codeclimate\.com/);
 			});
 
+			it("should add bithound to the readme.md", function () {
+				_yeomanGenerator.assert.fileContent("README.md", /bithound\.io/);
+			});
+
+			it("should create files to ignore es5 folder", function () {
+				_yeomanGenerator.assert.file([".bithoundrc", ".codeclimate.yml"]);
+			});
+
 			describe("(linting)", function () {
 				it("should generate an eslint file", function () {
 					_yeomanGenerator.assert.file([".eslintrc"]);

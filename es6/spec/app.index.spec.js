@@ -268,6 +268,14 @@ describe("oss-component generator", function() {
 				assert.fileContent("README.md", /codeclimate\.com/);
 			});
 
+			it("should add bithound to the readme.md", () => {
+				assert.fileContent("README.md", /bithound\.io/);
+			});
+
+			it("should create files to ignore es5 folder", () => {
+				assert.file([`.bithoundrc`, `.codeclimate.yml`]);
+			});
+
 			describe("(linting)", () => {
 				it("should generate an eslint file", () => {
 					assert.file([`.eslintrc`]);
