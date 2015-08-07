@@ -422,7 +422,7 @@ describe("oss-component generator", function() {
 		});
 
 		it("should not override the package.json if it already exists", () => {
-			assert.fileContent(`package.json`, packageContent);
+			assert.fileContent(`package.json`, /dependencies/);
 		});
 
 		it("should not override the package.json if it already exists but add generator version", () => {

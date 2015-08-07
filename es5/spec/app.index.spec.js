@@ -412,6 +412,10 @@ describe("oss-component generator", function () {
 			_yeomanGenerator.assert.fileContent("README.md", readmeContent);
 		});
 
+		it("should not override the package.json if it already exists", function () {
+			_yeomanGenerator.assert.fileContent("package.json", /dependencies/);
+		});
+
 		it("should not override the package.json if it already exists but add generator version", function () {
 			_yeomanGenerator.assert.fileContent("package.json", /generatorVersion/);
 		});
