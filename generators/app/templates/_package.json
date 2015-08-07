@@ -44,6 +44,7 @@
     "karma-phantomjs-launcher": "^0.2.0",
     "karma-safari-launcher": "^0.1.1",
     "karma-sauce-launcher": "^0.2.11",
-    "mocha": "^2.2.5"
+    "mocha": "^2.2.5",
+    "superstack": "0.0.4"
   }
 }
