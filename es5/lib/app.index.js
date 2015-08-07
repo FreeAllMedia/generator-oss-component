@@ -298,7 +298,7 @@ var Component = (function (_yeoman$generators$Base) {
 				this[copyFilesIf](["es6/lib/_##componentName##.js", "es6/spec/_##componentName##.spec.js"]);
 			}
 
-			this[copyFilesIf](["_README.md", "_package.json"], function (destination) {
+			this[copyFilesIf](["_README.md"], function (destination) {
 				try {
 					_fs2["default"].statSync(destination);
 					//so we update the version is the package json file already exists
@@ -306,6 +306,20 @@ var Component = (function (_yeoman$generators$Base) {
 					var newPkg = require(newPkgPath);
 					newPkg.generatorVersion = _this2.pkg.version;
 					_fs2["default"].writeFileSync(newPkgPath, JSON.stringify(newPkg));
+					return false;
+				} catch (e) {
+					return true;
+				}
+			});
+
+			this[copyFilesIf](["_package.json"], function (destination) {
+				try {
+					_fs2["default"].statSync(destination);
+					//so we update the version is the package json file already exists
+					var newPkgPath = _this2.destinationPath("package.json");
+					var newPkg = require(newPkgPath);
+					newPkg.generatorVersion = _this2.pkg.version;
+					_fs2["default"].writeFileSync(newPkgPath, JSON.stringify(newPkg, null, "\t"));
 					return false;
 				} catch (e) {
 					return true;

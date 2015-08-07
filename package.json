@@ -43,14 +43,15 @@
     "gulp": "^3.9.0",
     "gulp-babel": "^5.1.0",
     "gulp-istanbul": "^0.10.0",
-    "gulp-spawn-mocha": "^2.2.1",
     "gulp-run": "^1.6.8",
+    "gulp-spawn-mocha": "^2.2.1",
     "gulp-util": "^3.0.6",
     "gulp-watch": "^4.2.4",
     "karma": "^0.12.37",
     "mocha": "^2.2.5",
     "rimraf": "^2.4.0",
-    "sinon": "^1.15.3"
+    "sinon": "^1.15.3",
+    "superstack": "0.0.4"
   },
   "dependencies": {
     "babel": "^5.5.8",
