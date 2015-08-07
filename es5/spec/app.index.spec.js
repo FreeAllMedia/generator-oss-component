@@ -30,7 +30,8 @@ var basePath = _path2["default"].join(_os2["default"].tmpdir(), "/temp-test");
 
 describe("oss-component generator", function () {
 	var context = undefined,
-	    answers = undefined;
+	    answers = undefined,
+	    pkgVersion = undefined;
 
 	this.timeout(10000); // Yeoman generation can sometimes take longer than 2 seconds. Let's give it 10.
 
@@ -86,6 +87,8 @@ describe("oss-component generator", function () {
 				"gitHub": false
 			}
 		};
+
+		pkgVersion = require("../../package.json").version;
 	});
 
 	describe("(with all false)", function () {
@@ -103,7 +106,7 @@ describe("oss-component generator", function () {
 			});
 
 			it("should set generatorVersion property correctly", function () {
-				context.generator.context.generatorVersion.should.equal(require("../../package.json").version);
+				context.generator.context.generatorVersion.should.equal(pkgVersion);
 			});
 
 			it("should set description property correctly", function () {
@@ -410,7 +413,11 @@ describe("oss-component generator", function () {
 		});
 
 		it("should not override the package.json if it already exists", function () {
-			_yeomanGenerator.assert.fileContent("package.json", packageContent);
+			_yeomanGenerator.assert.fileContent("package.json", /dependencies/);
+		});
+
+		it("should not override the package.json if it already exists but add generator version", function () {
+			_yeomanGenerator.assert.fileContent("package.json", /generatorVersion/);
 		});
 	});
 });
