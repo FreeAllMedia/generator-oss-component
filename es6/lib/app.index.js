@@ -316,6 +316,7 @@ export default class Component extends yeoman.generators.Base {
 			"_index.js",
 			"_paths.json",
 			"_.editorconfig",
+			"tasks/_clean.js",
 			"tasks/_build.js",
 			"tasks/_build-lib.js",
 			"tasks/_build-lib-assets.js",
