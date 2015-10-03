@@ -1,10 +1,11 @@
 {
   "name": "generator-oss-component",
-  "version": "0.2.21",
+  "version": "0.2.22",
   "description": "generator for open source components",
   "main": "generators/app/index.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "postinstall": "gulp build"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,7 @@
     "chai": "^3.0.0",
     "codeclimate-test-reporter": "^0.1.0",
     "coveralls": "^2.11.2",
+    "del": "^2.0.2",
     "eslint": "^0.24.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.1.0",

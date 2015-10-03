@@ -1,11 +1,12 @@
-{
+-save{
   "generatorVersion": "<%= generatorVersion %>",
   "name": "<%= name %>",
   "version": "0.1.0",
   "description": "<%= description %>",
   "main": "index.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "postinstall": "gulp build"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   "dependencies": {},
   "devDependencies": {
     "babel": "^5.5.6",
+    "del": "^2.0.2",
     "babel-eslint": "^3.1.20",
     "eslint": "^0.24.0",
     "chai": "^3.0.0",

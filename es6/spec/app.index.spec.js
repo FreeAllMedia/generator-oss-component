@@ -347,6 +347,7 @@ describe("oss-component generator", function() {
 		describe("(automation)", () => {
 			it("should create gulp related files", () => {
 				assert.file([`gulpfile.babel.js`,
+					`tasks/clean.js`,
 					`tasks/build.js`,
 					`tasks/build-lib.js`,
 					`tasks/build-lib-assets.js`,
@@ -370,14 +371,6 @@ describe("oss-component generator", function() {
 			it("should generate a mock entry point with his test", () => {
 				assert.file([`es6/lib/${answers.true.name}.js`,
 					`es6/spec/${answers.true.name}.spec.js`
-				]);
-			});
-
-			//suspended due to the time that takes to install dependencies
-			//tested also with the actual yo command
-			xit("should create es5 compatible files", () => {
-				assert.file([`es5/lib/${answers.true.name}.js`,
-					`es5/spec/${answers.true.name}.spec.js`
 				]);
 			});
 		});
