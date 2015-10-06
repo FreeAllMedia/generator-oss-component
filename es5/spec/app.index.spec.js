@@ -369,12 +369,6 @@ describe("oss-component generator", function () {
 			it("should generate a mock entry point with his test", function () {
 				_yeomanGenerator.assert.file(["es6/lib/" + answers["true"].name + ".js", "es6/spec/" + answers["true"].name + ".spec.js"]);
 			});
-
-			//suspended due to the time that takes to install dependencies
-			//tested also with the actual yo command
-			xit("should create es5 compatible files", function () {
-				_yeomanGenerator.assert.file(["es5/lib/" + answers["true"].name + ".js", "es5/spec/" + answers["true"].name + ".spec.js"]);
-			});
 		});
 	});
 
